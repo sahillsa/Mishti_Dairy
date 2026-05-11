@@ -1,0 +1,70 @@
+<ion-content class="auth-content" fullscreen="true">
+  <div class="auth-layout">
+    <section class="auth-visual">
+      <img
+        src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1200&q=80"
+        alt="Fresh dairy farm"
+      />
+      <div class="auth-brand">
+        <ion-icon name="storefront-outline"></ion-icon>
+        <h1>Mishti Farmer</h1>
+        <p>Fresh dairy, sweets, and daily essentials from farm to doorstep.</p>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Login</ion-card-title>
+          <ion-card-subtitle>Use the demo user or admin account</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <form [formGroup]="form" (ngSubmit)="login()">
+            <ion-list lines="full">
+              <ion-item>
+                <ion-icon name="mail-outline" slot="start"></ion-icon>
+                <ion-input label="Email" labelPlacement="stacked" type="email" formControlName="email"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
+                <ion-input
+                  label="Password"
+                  labelPlacement="stacked"
+                  type="password"
+                  formControlName="password"
+                ></ion-input>
+              </ion-item>
+            </ion-list>
+
+            <ion-note color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-note>
+
+            <ion-button expand="block" type="submit">
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+              Sign in
+            </ion-button>
+          </form>
+
+          <ion-list class="demo-list" lines="none">
+            <ion-item>
+              <ion-label>
+                <strong>User</strong>
+                <p>user@mishti.in / user123</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <strong>Admin</strong>
+                <p>admin@mishti.in / admin123</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div class="auth-links">
+            <ion-button fill="clear" routerLink="/forgot-password">Forgot password</ion-button>
+            <ion-button fill="clear" routerLink="/register">Register</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+  </div>
+</ion-content>

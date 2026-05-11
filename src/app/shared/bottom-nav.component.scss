@@ -1,0 +1,21 @@
+.mobile-nav {
+  display: none;
+
+  ion-tab-bar {
+    --background: #fffaf0;
+    border-top: 1px solid rgba(93, 66, 41, 0.12);
+    min-height: 64px;
+  }
+
+  ion-tab-button {
+    --color: #6f6250;
+    --color-selected: #18715a;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 760px) {
+  .mobile-nav {
+    display: block;
+  }
+}

@@ -1,0 +1,116 @@
+<app-page-header title="Payment"></app-page-header>
+
+<ion-content id="main-content" class="page-content" fullscreen="true">
+  <ion-grid fixed="true" *ngIf="cart$ | async as cart">
+    <ion-row class="section-heading">
+      <ion-col>
+        <h1>Checkout & Razorpay</h1>
+        <p>Demo checkout captures order data locally and marks Razorpay payments as paid.</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="cart.length && !placedOrder; else paymentState">
+      <ion-col size="12" size-lg="7">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Delivery details</ion-card-title>
+            <ion-card-subtitle>Address and slot for this order</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <form [formGroup]="form" (ngSubmit)="placeOrder()">
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-icon name="location-outline" slot="start"></ion-icon>
+                  <ion-textarea
+                    label="Address"
+                    labelPlacement="stacked"
+                    autoGrow="true"
+                    formControlName="address"
+                  ></ion-textarea>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="call-outline" slot="start"></ion-icon>
+                  <ion-input label="Mobile number" labelPlacement="stacked" formControlName="mobile"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="time-outline" slot="start"></ion-icon>
+                  <ion-select label="Delivery slot" labelPlacement="stacked" formControlName="deliverySlot">
+                    <ion-select-option *ngFor="let slot of deliverySlots" [value]="slot">{{ slot }}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-list>
+
+              <ion-radio-group formControlName="paymentMethod">
+                <ion-list-header>
+                  <ion-label>Payment method</ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-icon name="wallet-outline" slot="start"></ion-icon>
+                  <ion-radio value="Razorpay" labelPlacement="end">Razorpay demo</ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="receipt-outline" slot="start"></ion-icon>
+                  <ion-radio value="Cash on delivery" labelPlacement="end">Cash on delivery</ion-radio>
+                </ion-item>
+              </ion-radio-group>
+
+              <ion-note color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-note>
+              <ion-button expand="block" type="submit">
+                Pay {{ shopService.cartTotal(cart) | currency: 'INR':'symbol':'1.0-0' }}
+              </ion-button>
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-lg="5">
+        <ion-card class="summary-card">
+          <ion-card-header>
+            <ion-card-title>Items</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item *ngFor="let item of cart">
+                <ion-label>
+                  <h3>{{ item.product.name }}</h3>
+                  <p>{{ item.quantity }} × {{ item.product.unit }}</p>
+                </ion-label>
+                <ion-note slot="end">{{ item.product.price * item.quantity | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ng-template #paymentState>
+      <ion-row>
+        <ion-col size="12">
+          <ion-card class="empty-state" *ngIf="placedOrder; else noItems">
+            <ion-card-content>
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <h2>Order {{ placedOrder.id }} placed</h2>
+              <p>
+                {{ placedOrder.paymentMethod }} payment is {{ placedOrder.paymentStatus | lowercase }}. Delivery:
+                {{ placedOrder.deliverySlot }}.
+              </p>
+              <ion-button routerLink="/orders">View order</ion-button>
+            </ion-card-content>
+          </ion-card>
+          <ng-template #noItems>
+            <ion-card class="empty-state">
+              <ion-card-content>
+                <ion-icon name="bag-outline"></ion-icon>
+                <h2>No items to checkout</h2>
+                <p>Add products before opening the payment page.</p>
+                <ion-button routerLink="/products">Browse products</ion-button>
+              </ion-card-content>
+            </ion-card>
+          </ng-template>
+        </ion-col>
+      </ion-row>
+    </ng-template>
+  </ion-grid>
+</ion-content>
+
+<app-bottom-nav></app-bottom-nav>

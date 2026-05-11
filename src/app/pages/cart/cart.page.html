@@ -1,0 +1,87 @@
+<app-page-header title="Cart"></app-page-header>
+
+<ion-content id="main-content" class="page-content" fullscreen="true">
+  <ion-grid fixed="true" *ngIf="cart$ | async as cart">
+    <ion-row class="section-heading">
+      <ion-col>
+        <h1>Your cart</h1>
+        <p>{{ shopService.cartCount(cart) }} items ready for checkout.</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="cart.length; else emptyCart">
+      <ion-col size="12" size-lg="8">
+        <ion-list class="surface-list">
+          <ion-item *ngFor="let item of cart">
+            <ion-thumbnail slot="start">
+              <img [src]="item.product.image" [alt]="item.product.name" />
+            </ion-thumbnail>
+            <ion-label>
+              <h2>{{ item.product.name }}</h2>
+              <p>{{ item.product.unit }} · {{ item.product.price | currency: 'INR':'symbol':'1.0-0' }}</p>
+            </ion-label>
+            <ion-buttons slot="end" class="quantity-controls">
+              <ion-button fill="clear" (click)="decrease(item)" aria-label="Decrease quantity">
+                <ion-icon name="remove-circle-outline"></ion-icon>
+              </ion-button>
+              <ion-text>{{ item.quantity }}</ion-text>
+              <ion-button fill="clear" (click)="increase(item)" aria-label="Increase quantity">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+              <ion-button color="danger" fill="clear" (click)="remove(item)" aria-label="Remove item">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+
+      <ion-col size="12" size-lg="4">
+        <ion-card class="summary-card">
+          <ion-card-header>
+            <ion-card-title>Order summary</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item>
+                <ion-label>Subtotal</ion-label>
+                <ion-note slot="end">{{ shopService.cartTotal(cart) | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>Delivery</ion-label>
+                <ion-note slot="end" color="success">Free</ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label><strong>Total</strong></ion-label>
+                <ion-note slot="end" color="dark">
+                  <strong>{{ shopService.cartTotal(cart) | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                </ion-note>
+              </ion-item>
+            </ion-list>
+            <ion-button expand="block" routerLink="/payment">
+              Continue to payment
+              <ion-icon name="card-outline" slot="end"></ion-icon>
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ng-template #emptyCart>
+      <ion-row>
+        <ion-col size="12">
+          <ion-card class="empty-state">
+            <ion-card-content>
+              <ion-icon name="bag-outline"></ion-icon>
+              <h2>Your cart is empty</h2>
+              <p>Add dairy products to prepare a demo order.</p>
+              <ion-button routerLink="/products">Browse products</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ng-template>
+  </ion-grid>
+</ion-content>
+
+<app-bottom-nav></app-bottom-nav>

@@ -1,0 +1,24 @@
+{
+  "name": "Mishti Farmer",
+  "short_name": "Mishti",
+  "theme_color": "#18715a",
+  "background_color": "#f6faf5",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./",
+  "description": "Dairy product ordering PWA for Mishti Farmer.",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

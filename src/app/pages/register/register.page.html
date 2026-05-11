@@ -1,0 +1,63 @@
+<ion-content class="auth-content" fullscreen="true">
+  <div class="auth-layout auth-layout--compact">
+    <section class="auth-visual">
+      <img
+        src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?auto=format&fit=crop&w=1200&q=80"
+        alt="Fresh milk bottles"
+      />
+      <div class="auth-brand">
+        <ion-icon name="leaf-outline"></ion-icon>
+        <h1>Join Mishti Farmer</h1>
+        <p>Create a customer account for cart, orders, and support history.</p>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Register</ion-card-title>
+          <ion-card-subtitle>Customer role is assigned automatically</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <form [formGroup]="form" (ngSubmit)="register()">
+            <ion-list lines="full">
+              <ion-item>
+                <ion-input label="Full name" labelPlacement="stacked" formControlName="name"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-input label="Email" labelPlacement="stacked" type="email" formControlName="email"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-input
+                  label="Password"
+                  labelPlacement="stacked"
+                  type="password"
+                  formControlName="password"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-input label="Mobile number" labelPlacement="stacked" formControlName="mobile"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-textarea
+                  label="Delivery address"
+                  labelPlacement="stacked"
+                  autoGrow="true"
+                  formControlName="address"
+                ></ion-textarea>
+              </ion-item>
+            </ion-list>
+
+            <ion-note color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-note>
+
+            <ion-button expand="block" type="submit">Create account</ion-button>
+          </form>
+
+          <div class="auth-links">
+            <ion-button fill="clear" routerLink="/login">Back to login</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+  </div>
+</ion-content>

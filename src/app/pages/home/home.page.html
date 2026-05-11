@@ -1,0 +1,79 @@
+<app-page-header title="Mishti Farmer"></app-page-header>
+
+<ion-content id="main-content" class="page-content" fullscreen="true">
+  <ion-grid fixed="true">
+    <ion-row class="hero-row ion-align-items-center">
+      <ion-col size="12" size-lg="6">
+        <ion-chip color="success">
+          <ion-icon name="leaf-outline"></ion-icon>
+          <ion-label>Farm fresh dairy</ion-label>
+        </ion-chip>
+        <h1>Milk, paneer, ghee, curd, and sweets delivered fresh.</h1>
+        <p class="hero-copy">
+          Mishti Farmer brings daily dairy staples and small-batch treats into one responsive PWA for web,
+          Android, and iOS demos.
+        </p>
+        <ion-button routerLink="/products" size="large">
+          Shop products
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+        <ion-button routerLink="/orders" fill="outline" size="large">My orders</ion-button>
+      </ion-col>
+      <ion-col size="12" size-lg="6">
+        <ion-img
+          class="hero-image"
+          src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1400&q=80"
+          alt="Dairy farm"
+        ></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="stat-row">
+      <ion-col size="4" *ngFor="let stat of stats">
+        <ion-card class="metric-card">
+          <ion-card-content>
+            <strong>{{ stat.value }}</strong>
+            <span>{{ stat.label }}</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section-heading ion-align-items-center">
+      <ion-col>
+        <h2>Today’s Picks</h2>
+        <p>Best items to show in the first client walkthrough.</p>
+      </ion-col>
+      <ion-col size="auto">
+        <ion-button fill="clear" routerLink="/products">View all</ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="product-grid">
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let product of featuredProducts">
+        <ion-card class="product-card">
+          <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+          <ion-card-header>
+            <ion-chip color="tertiary">{{ product.tag }}</ion-chip>
+            <ion-card-title>{{ product.name }}</ion-card-title>
+            <ion-card-subtitle>{{ product.category }} · {{ product.unit }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{ product.description }}</p>
+            <div class="card-actions">
+              <ion-text color="dark">
+                <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+              </ion-text>
+              <ion-button (click)="addToCart(product)">
+                <ion-icon name="bag-outline" slot="start"></ion-icon>
+                Add
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<app-bottom-nav></app-bottom-nav>
