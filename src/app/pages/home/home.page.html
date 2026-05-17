@@ -3,119 +3,125 @@
 <ion-content id="main-content" class="page-content home-content" fullscreen="true">
   <ng-container *ngIf="products$ | async as products">
     <ng-container *ngIf="cart$ | async as cart">
-      
-      <!-- HERO BANNER SLIDER -->
-      <div class="hero-slider">
-        <div class="slide-track">
-          <div class="slide-item" *ngFor="let banner of banners" [routerLink]="banner.link" [queryParams]="banner.queryParams">
-            <img [src]="banner.image" [alt]="banner.title" />
-            <div class="slide-overlay">
-              <h2>{{ banner.title }}</h2>
-              <p>{{ banner.subtitle }}</p>
-              <ion-button color="light" size="small" shape="round">Shop Now</ion-button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- QUICK CATEGORIES -->
-      <div class="quick-categories">
-        <div class="category-item" *ngFor="let cat of quickCategories" [routerLink]="['/products']" [queryParams]="{ category: cat.title }">
-          <div class="icon-circle">
-            <ion-icon [name]="cat.icon"></ion-icon>
-          </div>
-          <span>{{ cat.title }}</span>
-        </div>
-        <div class="category-item" routerLink="/products">
-          <div class="icon-circle more-icon">
-            <ion-icon name="grid-outline"></ion-icon>
-          </div>
-          <span>View All</span>
-        </div>
-      </div>
-
-      <!-- NEW LAUNCHES SHELF -->
-      <div class="section-header">
-        <h2>New Launches</h2>
-        <span class="badge-new">NEW</span>
-      </div>
-      <div class="horizontal-shelf">
-        <div class="shelf-track">
-          <ion-card class="product-card mini-card" *ngFor="let product of newLaunches(products)" routerLink="/products">
-            <div class="product-gallery">
-              <ion-img [src]="product.image" [alt]="product.name"></ion-img>
-            </div>
-            <ion-card-content>
-              <ion-card-title>{{ product.name }}</ion-card-title>
-              <p>{{ product.unit }}</p>
-              <div class="price-action">
-                <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
-                <ion-button size="small" fill="clear" (click)="addToCart(product); $event.stopPropagation()" *ngIf="quantityInCart(product.id, cart) === 0">
-                  <ion-icon name="add-circle" slot="icon-only"></ion-icon>
-                </ion-button>
-                <div class="mini-stepper" *ngIf="quantityInCart(product.id, cart) > 0" (click)="$event.stopPropagation()">
-                  <span (click)="decrease(product, cart)">-</span>
-                  <strong>{{ quantityInCart(product.id, cart) }}</strong>
-                  <span (click)="increase(product, cart)">+</span>
-                </div>
+      <div class="home-container">
+        <!-- HERO BANNER SLIDER -->
+        <div class="hero-slider">
+          <div class="slide-track">
+            <div class="slide-item" *ngFor="let banner of banners" [routerLink]="banner.link"
+              [queryParams]="banner.queryParams">
+              <img [src]="banner.image" [alt]="banner.title" />
+              <div class="slide-overlay">
+                <h2>{{ banner.title }}</h2>
+                <p>{{ banner.subtitle }}</p>
+                <ion-button color="light" size="small" shape="round">Shop Now</ion-button>
               </div>
-            </ion-card-content>
-          </ion-card>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- BESTSELLERS GRID -->
-      <div class="section-header">
-        <h2>Bestsellers</h2>
-        <ion-button fill="clear" size="small" routerLink="/products">See All</ion-button>
-      </div>
-      <ion-grid fixed="true" class="bestsellers-grid">
-        <ion-row>
-          <ion-col size="6" size-md="4" size-lg="3" *ngFor="let product of featuredProducts(products)">
-            <ion-card class="product-card storefront-card">
+        <!-- QUICK CATEGORIES -->
+        <div class="quick-categories">
+          <div class="category-item" *ngFor="let cat of quickCategories" [routerLink]="['/products']"
+            [queryParams]="{ category: cat.title }">
+            <div class="icon-circle">
+              <ion-icon [name]="cat.icon"></ion-icon>
+            </div>
+            <span>{{ cat.title }}</span>
+          </div>
+          <div class="category-item" routerLink="/products">
+            <div class="icon-circle more-icon">
+              <ion-icon name="grid-outline"></ion-icon>
+            </div>
+            <span>View All</span>
+          </div>
+        </div>
+
+        <!-- NEW LAUNCHES SHELF -->
+        <div class="section-header">
+          <h2>New Launches</h2>
+          <span class="badge-new">NEW</span>
+        </div>
+        <div class="horizontal-shelf">
+          <div class="shelf-track">
+            <ion-card class="product-card mini-card" *ngFor="let product of newLaunches(products)">
               <div class="product-gallery">
                 <ion-img [src]="product.image" [alt]="product.name"></ion-img>
-                <ion-chip color="tertiary" class="floating-chip" *ngIf="product.tag">{{ product.tag }}</ion-chip>
               </div>
               <ion-card-content>
                 <ion-card-title>{{ product.name }}</ion-card-title>
-                <p class="unit-text">{{ product.unit }}</p>
-                <div class="price-action-full">
-                  <div class="price-box">
-                    <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
-                  </div>
-                  <ion-button size="small" expand="block" *ngIf="quantityInCart(product.id, cart) === 0; else stepper" (click)="addToCart(product)">
-                    ADD
+                <p>{{ product.unit }}</p>
+                <div class="price-action">
+                  <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                  <ion-button size="small" fill="clear" (click)="addToCart(product); $event.stopPropagation()"
+                    *ngIf="quantityInCart(product.id, cart) === 0">
+                    <ion-icon name="add-circle" slot="icon-only"></ion-icon>
                   </ion-button>
-                  <ng-template #stepper>
-                    <div class="full-stepper">
-                      <ion-button fill="clear" size="small" (click)="decrease(product, cart)">-</ion-button>
-                      <strong>{{ quantityInCart(product.id, cart) }}</strong>
-                      <ion-button fill="clear" size="small" (click)="increase(product, cart)">+</ion-button>
-                    </div>
-                  </ng-template>
+                  <div class="mini-stepper" *ngIf="quantityInCart(product.id, cart) > 0"
+                    (click)="$event.stopPropagation()">
+                    <span (click)="decrease(product, cart)">-</span>
+                    <strong>{{ quantityInCart(product.id, cart) }}</strong>
+                    <span (click)="increase(product, cart)">+</span>
+                  </div>
                 </div>
               </ion-card-content>
             </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+          </div>
+        </div>
 
-      <!-- PROMISES ROW -->
-      <ion-grid fixed="true">
-        <ion-row class="promise-row">
-          <ion-col size="12" size-md="4" *ngFor="let card of promiseCards">
-            <ion-item lines="none" class="promise-item">
-              <ion-icon [name]="card.icon" slot="start"></ion-icon>
-              <ion-label>
-                <h2>{{ card.label }}</h2>
-                <p>{{ card.detail }}</p>
-              </ion-label>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      
+        <!-- BESTSELLERS GRID -->
+        <div class="section-header">
+          <h2>Bestsellers</h2>
+          <ion-button fill="clear" size="small" routerLink="/products">See All</ion-button>
+        </div>
+        <ion-grid fixed="true" class="bestsellers-grid">
+          <ion-row>
+            <ion-col size="6" size-md="4" size-lg="3" *ngFor="let product of featuredProducts(products)">
+              <ion-card class="product-card storefront-card">
+                <div class="product-gallery">
+                  <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+                </div>
+                <ion-card-content>
+                  <ion-card-title>{{ product.name }}</ion-card-title>
+                  <p class="unit-text">{{ product.unit }}</p>
+                  <div class="price-action-full">
+                    <div class="price-box">
+                      <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                    </div>
+                    <ion-button size="small" expand="block" *ngIf="quantityInCart(product.id, cart) === 0; else stepper"
+                      (click)="addToCart(product)">
+                      ADD
+                    </ion-button>
+                    <ng-template #stepper>
+                      <div class="full-stepper">
+                        <ion-button fill="clear" size="small" (click)="decrease(product, cart)">-</ion-button>
+                        <strong>{{ quantityInCart(product.id, cart) }}</strong>
+                        <ion-button fill="clear" size="small" (click)="increase(product, cart)">+</ion-button>
+                      </div>
+                    </ng-template>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <!-- PROMISES ROW -->
+        <ion-grid fixed="true">
+          <ion-row class="promise-row">
+            <ion-col size="12" size-md="4" *ngFor="let card of promiseCards">
+              <ion-item lines="none" class="promise-item">
+                <ion-icon [name]="card.icon" slot="start"></ion-icon>
+                <ion-label>
+                  <h2>{{ card.label }}</h2>
+                  <p>{{ card.detail }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
       <div style="height: 60px;"></div> <!-- Spacing for bottom nav -->
 
     </ng-container>

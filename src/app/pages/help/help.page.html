@@ -71,21 +71,57 @@
       </ion-col>
     </ion-row>
 
-    <ion-row>
-      <ion-col size="12" size-md="6" *ngFor="let query of myQueries(queries)">
-        <ion-card class="query-card" [routerLink]="['/help', query.id]">
-          <ion-card-header>
-            <ion-chip [color]="statusColor(query)">{{ query.status }}</ion-chip>
-            <ion-card-title>{{ query.subject }}</ion-card-title>
-            <ion-card-subtitle>{{ query.date | date: 'medium' }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <p>{{ query.message }}</p>
-            <ion-note>{{ query.messages.length }} message(s)</ion-note>
-          </ion-card-content>
-        </ion-card>
+    <ion-row *ngIf="myQueries(queries).length; else noQueries" class="queries-grid-row">
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let query of myQueries(queries)" class="query-card-col">
+        <div class="premium-query-card" [routerLink]="['/help', query.id]">
+          
+          <!-- Card Header Area -->
+          <div class="card-header-bar">
+            <div class="card-icon-title">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+              <h2>{{ query.subject || 'General Inquiry' }}</h2>
+            </div>
+            <ion-chip [color]="statusColor(query)" class="status-badge">
+              {{ query.status }}
+            </ion-chip>
+          </div>
+
+          <!-- Date / Metadata subtitle row -->
+          <div class="card-subtitle-bar">
+            <span class="ticket-date">Placed on {{ query.date | date: 'medium' }}</span>
+          </div>
+
+          <!-- Content Area: Subject message snippet & message count badge -->
+          <div class="query-compact-content">
+            <p class="query-summary-desc">{{ query.message }}</p>
+            
+            <div class="query-meta-footer">
+              <span class="msg-count-pill">{{ query.messages.length }} message(s)</span>
+            </div>
+          </div>
+
+          <!-- Bottom Action Link -->
+          <div class="card-action-footer">
+            <span class="action-text">Open Conversation</span>
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
+
+    <ng-template #noQueries>
+      <ion-row class="empty-state-row">
+        <ion-col>
+          <div class="modern-empty-state">
+            <div class="icon-circle">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+            </div>
+            <h2>No queries yet</h2>
+            <p>Your support queries and tickets will appear here once submitted.</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ng-template>
   </ion-grid>
 </ion-content>
 

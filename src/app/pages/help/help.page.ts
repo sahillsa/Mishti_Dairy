@@ -53,4 +53,17 @@ export class HelpPage {
 
     return 'warning';
   }
+
+  statusIcon(query: HelpQuery): string {
+    if (query.status === 'Resolved' || query.status === 'Closed') {
+      return 'checkmark-circle-outline';
+    }
+    if (query.status === 'Waiting for user') {
+      return 'mail-unread-outline';
+    }
+    if (query.status === 'In review') {
+      return 'eye-outline';
+    }
+    return 'chatbubble-ellipses-outline';
+  }
 }

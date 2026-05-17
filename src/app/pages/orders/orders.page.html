@@ -9,27 +9,54 @@
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="myOrders(orders).length; else noOrders">
-      <ion-col size="12">
-        <ion-list class="compact-order-list" lines="none">
-          <ion-item *ngFor="let order of myOrders(orders)" class="order-list-item" button [routerLink]="['/orders', order.id]" detail="true">
-            <div class="status-icon-wrapper" slot="start" [ngClass]="order.status.toLowerCase()">
-              <ion-icon [name]="statusIcon(order)"></ion-icon>
-            </div>
+    <ng-container *ngIf="products$ | async as products">
+      <ion-row *ngIf="myOrders(orders).length; else noOrders" class="orders-grid-row">
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let order of myOrders(orders)" class="order-card-col">
+          <div class="premium-order-card" [routerLink]="['/orders', order.id]">
             
-            <ion-label class="order-label-content">
-              <div class="order-header-row">
-                <h3>{{ order.id }}</h3>
-                <span class="order-amount">{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</span>
+            <!-- Card Header Area -->
+            <div class="card-header-bar">
+              <div class="card-icon-title">
+                <ion-icon name="receipt-outline"></ion-icon>
+                <h2>Order #{{ order.id }}</h2>
               </div>
-              <p class="order-date">{{ order.date | date: 'medium' }}</p>
-              <p class="order-summary">{{ orderSummary(order) }}</p>
-              <ion-chip class="compact-chip" [color]="statusColor(order)">{{ order.status }}</ion-chip>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
+              <ion-chip [color]="statusColor(order)" class="status-badge">
+                {{ order.status }}
+              </ion-chip>
+            </div>
+
+            <!-- Date / Metadata subtitle row -->
+            <div class="card-subtitle-bar">
+              <span class="ticket-date">Placed on {{ order.date | date: 'medium' }}</span>
+            </div>
+
+            <!-- Content Area with Product Thumbnail and Summary -->
+            <div class="order-compact-content">
+              <div class="thumbnail-wrapper">
+                <ion-img [src]="orderImage(order, products)" alt="Product Thumbnail"></ion-img>
+                <div class="status-indicator" [ngClass]="order.status.toLowerCase()">
+                  <ion-icon [name]="statusIcon(order)"></ion-icon>
+                </div>
+              </div>
+              
+              <div class="order-meta-info">
+                <p class="order-summary-desc">{{ orderSummary(order) }}</p>
+                <div class="total-row-bar">
+                  <span class="total-lbl">Total</span>
+                  <span class="total-val">{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Action Link -->
+            <div class="card-action-footer">
+              <span class="action-text">Track Order & Chat</span>
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ng-container>
 
     <ng-template #noOrders>
       <ion-row class="empty-state-row">

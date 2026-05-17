@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Firestore, collection, collectionData, doc, docData, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, deleteDoc, doc, docData, setDoc, updateDoc } from '@angular/fire/firestore';
 
 import { AuthService } from './auth.service';
 import { PRODUCTS, SEEDED_ORDERS, SEEDED_QUERIES } from './mock-data';
@@ -53,6 +53,11 @@ export class ShopService {
     collectionData(collection(this.firestore, 'products')).subscribe((data) => {
       if (data && data.length > 0) {
         this.productsSubject.next(data as Product[]);
+        // Auto-fix live Khoa Mawa product image to the new premium local asset
+        const mawa = (data as any[]).find(p => p.id === 110);
+        if (mawa && mawa.image !== 'assets/mawa.png') {
+          updateDoc(doc(this.firestore, 'products', '110'), { image: 'assets/mawa.png' }).catch(console.error);
+        }
       } else {
         PRODUCTS.forEach(p => setDoc(doc(this.firestore, 'products', p.id.toString()), p));
       }
@@ -251,6 +256,29 @@ export class ShopService {
     return product;
   }
 
+  updateProduct(productId: number, draft: ProductDraft): Product {
+    const cleanStock = Math.max(0, Math.round(Number(draft.stock) || 0));
+    const cleanPrice = Math.max(0, Math.round(Number(draft.price) || 0));
+    const cleanRating = Math.min(5, Math.max(0, Number(draft.rating) || 4.6));
+
+    const updatedProducts = this.products.map((product) =>
+      product.id === productId
+        ? {
+            ...product,
+            ...draft,
+            stock: cleanStock,
+            price: cleanPrice,
+            rating: cleanRating,
+            isOutOfStock: cleanStock <= 0,
+          }
+        : product,
+    );
+
+    this.persistProducts(updatedProducts);
+    this.reconcileCartWithStock(productId);
+    return updatedProducts.find((p) => p.id === productId)!;
+  }
+
   updateProductStock(productId: number, stock: number): void {
     const cleanStock = Math.max(0, Math.round(Number(stock) || 0));
     this.persistProducts(
@@ -267,6 +295,14 @@ export class ShopService {
     this.persistProducts(
       this.products.map((product) => (product.id === productId ? { ...product, isOutOfStock } : product)),
     );
+    this.reconcileCartWithStock(productId);
+  }
+
+  deleteProduct(productId: number): void {
+    const updatedProducts = this.products.filter((p) => p.id !== productId);
+    this.productsSubject.next(updatedProducts);
+    this.writeJson(this.productsKey, updatedProducts);
+    deleteDoc(doc(this.firestore, 'products', productId.toString())).catch(console.error);
     this.reconcileCartWithStock(productId);
   }
 

@@ -4,66 +4,109 @@
   <ion-grid fixed="true" *ngIf="orders$ | async as orders">
     <ion-row class="section-heading">
       <ion-col>
-        <h1>All orders</h1>
-        <p>Open an order to change status, add shipping details, and chat with the customer.</p>
+        <h1>All Orders</h1>
+        <p>Manage customer orders, track shipping logistics, update delivery status, and coordinate client chat.</p>
       </ion-col>
     </ion-row>
 
-    <ion-row>
-      <ion-col size="12" *ngFor="let order of orders">
-        <ion-card class="admin-order-card" [routerLink]="['/admin/orders', order.id]">
-          <ion-card-header>
-            <ion-chip [color]="statusColor(order)">{{ order.status }}</ion-chip>
-            <ion-card-title>{{ order.id }} | {{ order.userName }}</ion-card-title>
-            <ion-card-subtitle>{{ order.date | date: 'medium' }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-grid>
-              <ion-row>
-                <ion-col size="12" size-lg="5">
-                  <ion-list lines="none">
-                    <ion-item>
-                      <ion-icon name="person-circle-outline" slot="start"></ion-icon>
-                      <ion-label>
-                        <h3>{{ order.userName }}</h3>
-                        <p>{{ order.email }}</p>
-                      </ion-label>
-                    </ion-item>
-                    <ion-item>
-                      <ion-icon name="call-outline" slot="start"></ion-icon>
-                      <ion-label>{{ order.mobile }}</ion-label>
-                    </ion-item>
-                    <ion-item>
-                      <ion-icon name="location-outline" slot="start"></ion-icon>
-                      <ion-label>{{ order.address }}</ion-label>
-                    </ion-item>
-                  </ion-list>
-                </ion-col>
-                <ion-col size="12" size-lg="7">
-                  <ion-list lines="full">
-                    <ion-item *ngFor="let item of order.items">
-                      <ion-label>
-                        <h3>{{ item.name }}</h3>
-                        <p>{{ item.quantity }} x {{ item.unit }} | {{ item.price | currency: 'INR':'symbol':'1.0-0' }}</p>
-                      </ion-label>
-                      <ion-note slot="end">
-                        {{ item.price * item.quantity | currency: 'INR':'symbol':'1.0-0' }}
-                      </ion-note>
-                    </ion-item>
-                    <ion-item>
-                      <ion-label><strong>Total</strong></ion-label>
-                      <ion-note slot="end" color="dark">
-                        <strong>{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</strong>
-                      </ion-note>
-                    </ion-item>
-                  </ion-list>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-content>
-        </ion-card>
+    <ion-row *ngIf="orders.length > 0; else emptyState" class="orders-grid-row">
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let order of orders" class="order-card-col">
+        <div class="premium-order-card" [routerLink]="['/admin/orders', order.id]">
+          <!-- Card Header Area -->
+          <div class="card-header-bar">
+            <div class="card-icon-title">
+              <ion-icon name="receipt-outline"></ion-icon>
+              <h2>Order #{{ order.id }}</h2>
+            </div>
+            <ion-chip [color]="statusColor(order)" class="status-badge">
+              {{ order.status }}
+            </ion-chip>
+          </div>
+
+          <!-- Date / Metadata subtitle row -->
+          <div class="card-subtitle-bar">
+            <span class="ticket-date">Placed on {{ order.date | date: 'fullDate' }} at {{ order.date | date: 'shortTime' }}</span>
+          </div>
+
+          <!-- Content Grid columns -->
+          <div class="order-columns-grid">
+            <!-- Left Column: Customer details block -->
+            <div class="client-details-column">
+              <div class="customer-info-section">
+                <div class="avatar-block">
+                  <ion-icon name="person-circle-outline"></ion-icon>
+                </div>
+                <div class="meta-block">
+                  <h3>{{ order.userName }}</h3>
+                  <p class="email-text">{{ order.email }}</p>
+                </div>
+              </div>
+
+              <div class="contact-details-list">
+                <div class="contact-item">
+                  <ion-icon name="call-outline" class="contact-icon"></ion-icon>
+                  <span class="contact-text">{{ order.mobile }}</span>
+                </div>
+                <div class="contact-item address-item">
+                  <ion-icon name="location-outline" class="contact-icon"></ion-icon>
+                  <span class="contact-text">{{ order.address }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Order items listing summary -->
+            <div class="order-summary-column">
+              <div class="products-box-header">
+                <ion-icon name="cube-outline"></ion-icon>
+                <span>Items summary ({{ order.items.length }} SKU)</span>
+              </div>
+
+              <div class="products-list-wrapper">
+                <div class="product-item-row" *ngFor="let item of order.items">
+                  <div class="item-name-meta">
+                    <h4>{{ item.name }}</h4>
+                    <span class="item-calculation">{{ item.quantity }} &times; {{ item.unit }} @ {{ item.price | currency: 'INR':'symbol':'1.0-0' }}</span>
+                  </div>
+                  <div class="item-subtotal">
+                    {{ item.price * item.quantity | currency: 'INR':'symbol':'1.0-0' }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dotted dashed totals divider -->
+              <div class="totals-dashed-divider"></div>
+
+              <!-- Grand Total Row -->
+              <div class="grand-total-row">
+                <span class="total-label">Grand Total</span>
+                <span class="total-value">{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action link footer invite -->
+          <div class="card-action-footer">
+            <span class="action-text">Open Order Details & Chat</span>
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
+
+    <!-- Empty State -->
+    <ng-template #emptyState>
+      <ion-row class="empty-state-row">
+        <ion-col>
+          <div class="modern-empty-state">
+            <div class="icon-circle">
+              <ion-icon name="cart-outline"></ion-icon>
+            </div>
+            <h2>No orders found</h2>
+            <p>There are currently no active orders in the database system.</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ng-template>
   </ion-grid>
 </ion-content>
 

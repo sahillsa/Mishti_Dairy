@@ -1,7 +1,399 @@
-.admin-order-card ion-grid {
-  --ion-grid-padding: 0;
+:host {
+  --background: #f4f6f5 !important;
 }
 
-.admin-order-card {
-  cursor: pointer;
+.section-heading {
+  margin-bottom: 28px;
+  
+  h1 {
+    font-size: 2.1rem;
+    font-weight: 850;
+    color: #111827;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.025em;
+  }
+  
+  p {
+    color: #6b7280;
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.5;
+  }
 }
+
+.orders-grid-row {
+  margin: 0 -8px;
+}
+
+.order-card-col {
+  padding: 10px 8px;
+}
+
+/* Premium Physical Order Card styling */
+.premium-order-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  border: 1px solid rgba(24, 113, 90, 0.12);
+  box-shadow: 0 6px 20px rgba(24, 113, 90, 0.03), 0 2px 6px rgba(0, 0, 0, 0.01);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: #18715a;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(24, 113, 90, 0.06), 0 3px 8px rgba(0, 0, 0, 0.01);
+    border-color: rgba(24, 113, 90, 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .card-action-footer {
+      color: #135c49;
+
+      ion-icon {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  /* Card Header row with inline status badge */
+  .card-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 6px;
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      ion-icon {
+        font-size: 18px;
+        color: #18715a;
+        flex-shrink: 0;
+      }
+
+      h2 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #111827;
+        margin: 0;
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+      }
+    }
+
+    .status-badge {
+      margin: 0;
+      font-weight: 800;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 1px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Subtitle metadata */
+  .card-subtitle-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #9ca3af;
+  }
+
+  /* Main stacked details container (compact vertical list layout) */
+  .order-columns-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  /* Left Column: Client metadata details */
+  .client-details-column {
+    display: flex;
+    flex-direction: column;
+
+    .customer-info-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(24, 113, 90, 0.06);
+
+      .avatar-block {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #f0fdf4;
+        border: 1px solid rgba(24, 113, 90, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        ion-icon {
+          font-size: 18px;
+          color: #18715a;
+        }
+      }
+
+      .meta-block {
+        h3 {
+          font-size: 0.95rem;
+          font-weight: 800;
+          color: #111827;
+          margin: 0 0 1px 0;
+        }
+
+        .email-text {
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: #6b7280;
+          margin: 0;
+        }
+      }
+    }
+
+    .contact-details-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        .contact-icon {
+          font-size: 15px;
+          color: #9ca3af;
+          margin-top: 1px;
+          flex-shrink: 0;
+        }
+
+        .contact-text {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #4b5563;
+          line-height: 1.4;
+        }
+        
+        &.address-item {
+          .contact-text {
+            color: #6b7280;
+          }
+        }
+      }
+    }
+  }
+
+  /* Right Column: Ordered items listings */
+  .order-summary-column {
+    background: #f8fafc;
+    border: 1px solid rgba(24, 113, 90, 0.08);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+
+    .products-box-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 750;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+
+      ion-icon {
+        font-size: 14px;
+        color: #18715a;
+      }
+    }
+
+    .products-list-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+      padding-right: 4px;
+      
+      /* Webkit scrollbar customization for premium details scroll */
+      &::-webkit-scrollbar {
+        width: 3px;
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+    }
+
+    .product-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+
+      .item-name-meta {
+        h4 {
+          font-size: 0.86rem;
+          font-weight: 800;
+          color: #1f2937;
+          margin: 0 0 1px 0;
+          line-height: 1.3;
+        }
+
+        .item-calculation {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #9ca3af;
+        }
+      }
+
+      .item-subtotal {
+        font-size: 0.86rem;
+        font-weight: 800;
+        color: #111827;
+      }
+    }
+
+    .totals-dashed-divider {
+      border-top: 2px dashed rgba(24, 113, 90, 0.12);
+      margin: 10px 0;
+    }
+
+    .grand-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .total-label {
+        font-size: 0.86rem;
+        font-weight: 800;
+        color: #1f2937;
+      }
+
+      .total-value {
+        font-size: 1.05rem;
+        font-weight: 900;
+        color: #18715a;
+      }
+    }
+  }
+
+  /* Bottom Action footer invite link */
+  .card-action-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #18715a;
+    padding-top: 4px;
+    transition: color 0.25s ease;
+
+    ion-icon {
+      font-size: 14px;
+      transition: transform 0.25s ease;
+    }
+  }
+}
+
+/* Empty State Styling */
+.modern-empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(24, 113, 90, 0.12);
+  box-shadow: 0 10px 30px rgba(24, 113, 90, 0.04);
+  max-width: 500px;
+  margin: 40px auto;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #f0fdf4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    
+    ion-icon {
+      font-size: 40px;
+      color: #18715a;
+    }
+  }
+
+  h2 {
+    font-size: 1.45rem;
+    font-weight: 850;
+    color: #111827;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    font-size: 0.96rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Delayed staggered animations for cards list */
+.order-card-col:nth-child(1) .premium-order-card { animation-delay: 0.05s; }
+.order-card-col:nth-child(2) .premium-order-card { animation-delay: 0.1s; }
+.order-card-col:nth-child(3) .premium-order-card { animation-delay: 0.15s; }
+.order-card-col:nth-child(4) .premium-order-card { animation-delay: 0.2s; }
+.order-card-col:nth-child(5) .premium-order-card { animation-delay: 0.25s; }

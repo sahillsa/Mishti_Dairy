@@ -4,41 +4,78 @@
   <ion-grid fixed="true" *ngIf="queries$ | async as queries">
     <ion-row class="section-heading">
       <ion-col>
-        <h1>Support queries</h1>
-        <p>Open a query to update status and chat with the customer.</p>
+        <h1>Support Queries</h1>
+        <p>Monitor customer requests, update resolved tickets, and live chat with users.</p>
       </ion-col>
     </ion-row>
 
-    <ion-row>
-      <ion-col size="12" size-lg="6" *ngFor="let query of queries">
-        <ion-card class="query-card" [routerLink]="['/admin/queries', query.id]">
-          <ion-card-header>
-            <ion-chip [color]="statusColor(query)">{{ query.status }}</ion-chip>
-            <ion-card-title>{{ query.subject }}</ion-card-title>
-            <ion-card-subtitle>{{ query.date | date: 'medium' }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list lines="none">
-              <ion-item>
-                <ion-icon name="person-circle-outline" slot="start"></ion-icon>
-                <ion-label>
-                  <h3>{{ query.name }}</h3>
-                  <p>{{ query.email }}</p>
-                </ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="call-outline" slot="start"></ion-icon>
-                <ion-label>{{ query.mobile }}</ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
-                <ion-label>{{ query.messages.length }} message(s)</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
+    <ion-row *ngIf="queries.length > 0; else emptyState" class="queries-grid-row">
+      <ion-col size="12" size-sm="6" size-md="4" size-lg="3" *ngFor="let query of queries" class="query-card-col">
+        <div class="premium-query-card" [routerLink]="['/admin/queries', query.id]">
+          <!-- Card Header Area -->
+          <div class="card-header-bar">
+            <div class="card-icon-title">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+              <h2>{{ query.subject || 'General Inquiry' }}</h2>
+            </div>
+            <ion-chip [color]="statusColor(query)" class="status-badge">
+              {{ query.status }}
+            </ion-chip>
+          </div>
+
+          <!-- Date / ID info row -->
+          <div class="card-subtitle-bar">
+            <span class="ticket-id">Ticket #{{ query.id }}</span>
+            <span class="ticket-dot">&bull;</span>
+            <span class="ticket-date">{{ query.date | date: 'mediumDate' }} at {{ query.date | date: 'shortTime' }}</span>
+          </div>
+
+          <!-- Customer details segment (Matches the Order Details delivery styles) -->
+          <div class="customer-info-section">
+            <div class="avatar-block">
+              <ion-icon name="person-circle-outline"></ion-icon>
+            </div>
+            <div class="meta-block">
+              <h3>{{ query.name }}</h3>
+              <p class="email-text">{{ query.email }}</p>
+            </div>
+          </div>
+
+          <!-- Metadata info Grid (2 columns: Phone & Messages Count) -->
+          <div class="metadata-grid">
+            <div class="meta-item">
+              <ion-icon name="call-outline" class="meta-icon"></ion-icon>
+              <span class="meta-text">{{ query.mobile }}</span>
+            </div>
+            <div class="meta-item">
+              <ion-icon name="chatbubble-ellipses-outline" class="meta-icon chat-icon-accent"></ion-icon>
+              <span class="meta-text badge-accent">{{ query.messages.length }} message(s)</span>
+            </div>
+          </div>
+
+          <!-- Action Footer indicator -->
+          <div class="card-action-footer">
+            <span class="action-text">Open Ticket Conversation</span>
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
+
+    <!-- Empty State -->
+    <ng-template #emptyState>
+      <ion-row class="empty-state-row">
+        <ion-col>
+          <div class="modern-empty-state">
+            <div class="icon-circle">
+              <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+            </div>
+            <h2>No active queries!</h2>
+            <p>All support tickets have been fully resolved. Great work!</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ng-template>
   </ion-grid>
 </ion-content>
 

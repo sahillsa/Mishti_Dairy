@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import { AuthService } from '../../core/auth.service';
-import { Order } from '../../core/models';
+import { Order, Product } from '../../core/models';
 import { ShopService } from '../../core/shop.service';
 
 @Component({
@@ -15,10 +15,18 @@ export class OrdersPage {
   private readonly authService = inject(AuthService);
   private readonly shopService = inject(ShopService);
   readonly orders$ = this.shopService.orders$;
+  readonly products$ = this.shopService.products$;
 
   myOrders(orders: Order[]): Order[] {
     const userId = this.authService.currentUser?.id;
     return orders.filter((order) => order.userId === userId);
+  }
+
+  orderImage(order: Order, products: Product[]): string {
+    if (!order.items || order.items.length === 0) return 'assets/placeholder.png';
+    const firstItem = order.items[0];
+    const product = products.find(p => p.id === firstItem.productId);
+    return product ? (product.image || 'assets/placeholder.png') : 'assets/placeholder.png';
   }
 
   statusColor(order: Order): string {

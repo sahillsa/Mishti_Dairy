@@ -11,62 +11,167 @@
 
     <ion-row>
       <ion-col size="12" size-lg="5">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Add product</ion-card-title>
-            <ion-card-subtitle>Creates a local demo SKU</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <form [formGroup]="form" (ngSubmit)="addProduct()">
-              <ion-list lines="full">
-                <ion-item>
-                  <ion-input label="Product name" labelPlacement="stacked" formControlName="name"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input label="Category" labelPlacement="stacked" formControlName="category"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-textarea label="Description" labelPlacement="stacked" autoGrow="true" formControlName="description"></ion-textarea>
-                </ion-item>
-                <ion-list-header>
-                  <ion-label>Product Images (Up to 5)</ion-label>
-                  <ion-button *ngIf="imageSlots.length < 5" (click)="addImageSlot()">Add Image</ion-button>
-                </ion-list-header>
-                
-                <ion-item *ngFor="let slot of imageSlots; let i = index">
-                  <div style="width: 100%; padding-top: 8px; padding-bottom: 8px;">
-                    <ion-label position="stacked">Image {{ i + 1 }} (Upload or URL)</ion-label>
-                    <input type="file" accept="image/*" (change)="onFileSelected($event, i)" style="margin-top: 8px; margin-bottom: 8px; display: block;" />
-                    <ion-input [value]="slot.url" (ionInput)="onUrlEntered($event, i)" placeholder="Or paste image URL" [disabled]="!!slot.file"></ion-input>
-                    <ion-button color="danger" fill="clear" size="small" (click)="removeImageSlot(i)" *ngIf="imageSlots.length > 1">
-                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-                    </ion-button>
+        <div class="premium-form-card">
+          <div class="form-header" [ngClass]="{'editing-mode': editingProduct}">
+            <div class="header-icon-circle">
+              <ion-icon [name]="editingProduct ? 'create-outline' : 'cube-outline'"></ion-icon>
+            </div>
+            <div class="header-text">
+              <h2>{{ editingProduct ? 'Edit Product' : 'Add Product' }}</h2>
+              <p>{{ editingProduct ? 'Updating "' + editingProduct.name + '" details' : 'Creates a local demo SKU in live catalog' }}</p>
+            </div>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="addProduct()" class="creative-form">
+            <!-- Row 1: Name & Category -->
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="p-name">Product Name</label>
+                <div class="input-wrapper">
+                  <ion-icon name="pencil-outline" class="input-icon"></ion-icon>
+                  <input id="p-name" type="text" formControlName="name" placeholder="e.g. Masala Paneer" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="p-category">Category</label>
+                <div class="input-wrapper select-wrapper">
+                  <ion-icon name="grid-outline" class="input-icon"></ion-icon>
+                  <select id="p-category" formControlName="category">
+                    <option value="Milk">Milk</option>
+                    <option value="Curd">Curd</option>
+                    <option value="Ghee">Ghee</option>
+                    <option value="Sweets base">Sweets base</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Beverages">Beverages</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2: Description -->
+            <div class="form-group">
+              <label for="p-desc">Description</label>
+              <div class="input-wrapper textarea-wrapper">
+                <ion-icon name="document-text-outline" class="input-icon textarea-icon"></ion-icon>
+                <textarea id="p-desc" formControlName="description" rows="3" placeholder="Explain product features, benefits, usage..."></textarea>
+              </div>
+            </div>
+
+            <!-- Row 3: Product Images (Gourmet Upload Area) -->
+            <div class="media-section">
+              <div class="section-label-row">
+                <span class="media-label">Product Artwork (Up to 5)</span>
+                <button type="button" class="add-slot-btn" *ngIf="imageSlots.length < 5" (click)="addImageSlot()">
+                  <ion-icon name="add-circle-outline"></ion-icon> Add slot
+                </button>
+              </div>
+
+              <!-- Media Grid -->
+              <div class="media-gallery-grid">
+                <div *ngFor="let slot of imageSlots; let i = index" class="media-slot-card" [ngClass]="{'has-content': slot.file || slot.url}">
+                  
+                  <!-- Thumbnail Preview -->
+                  <div class="slot-preview" *ngIf="slot.file || slot.url">
+                    <img [src]="getSlotPreview(slot)" alt="Artwork Preview" />
+                    <button type="button" class="remove-slot-badge" (click)="removeImageSlot(i)">
+                      <ion-icon name="close-circle"></ion-icon>
+                    </button>
                   </div>
-                </ion-item>
-                <ion-item>
-                  <ion-input label="Unit" labelPlacement="stacked" formControlName="unit"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input label="Tag" labelPlacement="stacked" formControlName="tag"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input label="Price" labelPlacement="stacked" type="number" formControlName="price"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input label="Quantity" labelPlacement="stacked" type="number" formControlName="stock"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input label="Rating" labelPlacement="stacked" type="number" formControlName="rating"></ion-input>
-                </ion-item>
-              </ion-list>
-              <ion-button expand="block" type="submit" [disabled]="isUploading">
-                <ion-spinner *ngIf="isUploading" name="crescent" slot="start"></ion-spinner>
-                <ion-icon *ngIf="!isUploading" name="add-circle-outline" slot="start"></ion-icon>
-                {{ isUploading ? 'Uploading...' : 'Add product' }}
-              </ion-button>
-            </form>
-          </ion-card-content>
-        </ion-card>
+
+                  <!-- Empty upload prompt -->
+                  <div class="slot-empty-prompt" *ngIf="!slot.file && !slot.url">
+                    <div class="prompt-icon">
+                      <ion-icon name="image-outline"></ion-icon>
+                    </div>
+                    <span class="prompt-text">Img {{ i + 1 }}</span>
+                    
+                    <div class="slot-actions">
+                      <label class="file-upload-label">
+                        <ion-icon name="cloud-upload-outline"></ion-icon> Upload
+                        <input type="file" accept="image/*" (change)="onFileSelected($event, i)" />
+                      </label>
+                      <input type="text" placeholder="Or URL..." [value]="slot.url" (input)="onUrlEntered($event, i)" class="url-inline-input" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 4: Unit & Tag -->
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="p-unit">Unit Size</label>
+                <div class="input-wrapper">
+                  <ion-icon name="scale-outline" class="input-icon"></ion-icon>
+                  <input id="p-unit" type="text" formControlName="unit" placeholder="e.g. 500 g" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="p-tag">Marketing Tag</label>
+                <div class="input-wrapper">
+                  <ion-icon name="pricetag-outline" class="input-icon"></ion-icon>
+                  <input id="p-tag" type="text" formControlName="tag" placeholder="e.g. Pure Cow Ghee" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 5: Price, Quantity & Rating -->
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label for="p-price">Price (₹)</label>
+                <div class="input-wrapper">
+                  <input id="p-price" type="number" formControlName="price" placeholder="120" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="p-qty">Stock</label>
+                <div class="input-wrapper">
+                  <input id="p-qty" type="number" formControlName="stock" placeholder="20" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="p-rating">Rating</label>
+                <div class="input-wrapper">
+                  <input id="p-rating" type="number" formControlName="rating" step="0.1" max="5" placeholder="4.7" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Add/Edit Actions Group -->
+            <div class="form-actions-group" *ngIf="editingProduct; else addBtn">
+              <button type="button" class="submit-form-btn save-changes-btn" [disabled]="isUploading" (click)="saveProductChanges()">
+                <span *ngIf="isUploading" class="btn-content">
+                  <ion-spinner name="crescent"></ion-spinner>
+                  Saving Changes...
+                </span>
+                <span *ngIf="!isUploading" class="btn-content">
+                  <ion-icon name="save-outline"></ion-icon>
+                  Save Changes
+                </span>
+              </button>
+              <button type="button" class="cancel-form-btn" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+            
+            <ng-template #addBtn>
+              <button type="submit" class="submit-form-btn" [disabled]="isUploading">
+                <span *ngIf="isUploading" class="btn-content">
+                  <ion-spinner name="crescent"></ion-spinner>
+                  Uploading Artwork...
+                </span>
+                <span *ngIf="!isUploading" class="btn-content">
+                  <ion-icon name="sparkles-outline"></ion-icon>
+                  Publish to Catalog
+                </span>
+              </button>
+            </ng-template>
+          </form>
+        </div>
       </ion-col>
 
       <ion-col size="12" size-lg="7">
@@ -76,33 +181,52 @@
             <ion-card-subtitle>{{ products.length }} products in catalog</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
-            <ion-list lines="full">
-              <ion-item *ngFor="let product of products">
-                <ion-thumbnail slot="start">
-                  <img [src]="product.image" [alt]="product.name" />
-                </ion-thumbnail>
-                <ion-label>
-                  <h3>{{ product.name }}</h3>
-                  <p>{{ product.category }} | {{ product.unit }} | {{ product.price | currency: 'INR':'symbol':'1.0-0' }}</p>
-                </ion-label>
-                <ion-input
-                  slot="end"
-                  class="stock-input"
-                  type="number"
-                  aria-label="Stock quantity"
-                  [(ngModel)]="stockDrafts[product.id]"
-                ></ion-input>
-                <ion-toggle
-                  slot="end"
-                  aria-label="Out of stock"
-                  [checked]="product.isOutOfStock"
-                  (ionChange)="toggleOutOfStock(product, $event.detail.checked)"
-                ></ion-toggle>
-                <ion-button slot="end" fill="outline" (click)="saveStock(product)">
-                  <ion-icon name="save-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </ion-item>
-            </ion-list>
+            <div class="inventory-list-container">
+              <div *ngFor="let product of products$ | async" class="inventory-item">
+                <div class="product-info-sec">
+                  <div class="thumb-wrapper">
+                    <img [src]="product.image" [alt]="product.name" />
+                  </div>
+                  <div class="meta-wrapper">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-subtext">{{ product.category }} &bull; {{ product.unit }}</p>
+                    <span class="product-price">{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</span>
+                  </div>
+                </div>
+
+                <div class="product-controls-sec">
+                  <div class="control-item stock-qty">
+                    <span class="control-label">Qty:</span>
+                    <input
+                      type="number"
+                      class="compact-number-input"
+                      aria-label="Stock quantity"
+                      [(ngModel)]="stockDrafts[product.id]"
+                    />
+                  </div>
+
+                  <div class="control-item stock-toggle">
+                    <span class="control-label">In Stock:</span>
+                    <ion-toggle
+                      color="success"
+                      aria-label="In stock toggle"
+                      [checked]="!product.isOutOfStock"
+                      (ionChange)="toggleOutOfStock(product, !$event.detail.checked)"
+                    ></ion-toggle>
+                  </div>
+
+                  <button class="action-btn update-btn" (click)="saveStock(product)">
+                    Update
+                  </button>
+                  <button class="action-btn edit-btn" (click)="startEditProduct(product)" aria-label="Edit product">
+                    <ion-icon name="pencil-outline"></ion-icon>
+                  </button>
+                  <button class="action-btn delete-btn" (click)="deleteProduct(product)" aria-label="Delete product">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>

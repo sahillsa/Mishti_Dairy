@@ -144,7 +144,7 @@ export const PRODUCTS: Product[] = [
     name: 'Khoa Mawa',
     category: 'Sweets base',
     description: 'Reduced milk solids for laddoo, barfi, gujiya, and festive desserts.',
-    image: 'https://images.unsplash.com/photo-1605197161470-b6b79c99a5a2?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/mawa.png',
     price: 310,
     unit: '500 g',
     tag: 'Festive',
