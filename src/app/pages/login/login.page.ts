@@ -1,8 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 
 import { AuthService } from '../../core/auth.service';
+
+import { firstValueFrom } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-page',
@@ -16,6 +20,7 @@ export class LoginPage {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly loadingCtrl = inject(LoadingController);
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['user@mishti.in', [Validators.required, Validators.email]],
@@ -23,21 +28,32 @@ export class LoginPage {
   });
 
   errorMessage = '';
-  login(): void {
+  async login(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
     const { email, password } = this.form.getRawValue();
-    const didLogin = this.authService.login(email, password);
+    
+    const loading = await this.loadingCtrl.create({
+      message: 'Logging in...',
+      spinner: 'crescent'
+    });
+    await loading.present();
+
+    const didLogin = await this.authService.login(email, password);
 
     if (!didLogin) {
+      await loading.dismiss();
       this.errorMessage = 'Invalid email or password.';
       return;
     }
 
-    const user = this.authService.currentUser;
+    // Wait for the user document to load from Firestore
+    const user = await firstValueFrom(this.authService.currentUser$.pipe(filter(u => !!u)));
+    await loading.dismiss();
+
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     const defaultUrl = user?.role === 'admin' ? '/admin/dashboard' : '/home';
     const canUseReturnUrl =

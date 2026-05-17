@@ -19,6 +19,7 @@ export class ProductsPage implements OnInit {
 
   searchTerm = '';
   selectedCategory = 'All';
+  sortOption = 'default';
   selectedProduct: Product | null = null;
 
   ngOnInit(): void {
@@ -34,7 +35,9 @@ export class ProductsPage implements OnInit {
 
   filteredProducts(products: Product[]): Product[] {
     const query = this.searchTerm.trim().toLowerCase();
-    return products.filter((product) => {
+    
+    // 1. Filter
+    let result = products.filter((product) => {
       const matchesCategory = this.selectedCategory === 'All' || product.category === this.selectedCategory;
       const matchesQuery =
         product.name.toLowerCase().includes(query) ||
@@ -43,6 +46,24 @@ export class ProductsPage implements OnInit {
 
       return matchesCategory && matchesQuery;
     });
+
+    // 2. Sort
+    switch (this.sortOption) {
+      case 'priceAsc':
+        result = result.sort((a, b) => a.price - b.price);
+        break;
+      case 'priceDesc':
+        result = result.sort((a, b) => b.price - a.price);
+        break;
+      case 'nameAsc':
+        result = result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        // 'default' keeps original array order (e.g., bestsellers first)
+        break;
+    }
+
+    return result;
   }
 
   quantityInCart(productId: number, cart: CartItem[]): number {

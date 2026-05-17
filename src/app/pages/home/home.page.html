@@ -3,48 +3,106 @@
 <ion-content id="main-content" class="page-content home-content" fullscreen="true">
   <ng-container *ngIf="products$ | async as products">
     <ng-container *ngIf="cart$ | async as cart">
-      <ion-grid fixed="true">
-        <ion-row class="home-hero ion-align-items-center">
-          <ion-col size="12" size-lg="6">
-            <ion-chip color="success">
-              <ion-icon name="leaf-outline"></ion-icon>
-              <ion-label>Farm fresh dairy</ion-label>
-            </ion-chip>
-            <h1>Mishti Farmer dairy store</h1>
-            <p class="hero-copy">
-              Fresh milk, paneer, ghee, curd, chaas, lassi, and desserts packed for daily family orders.
-            </p>
+      
+      <!-- HERO BANNER SLIDER -->
+      <div class="hero-slider">
+        <div class="slide-track">
+          <div class="slide-item" *ngFor="let banner of banners" [routerLink]="banner.link" [queryParams]="banner.queryParams">
+            <img [src]="banner.image" [alt]="banner.title" />
+            <div class="slide-overlay">
+              <h2>{{ banner.title }}</h2>
+              <p>{{ banner.subtitle }}</p>
+              <ion-button color="light" size="small" shape="round">Shop Now</ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <ion-buttons class="hero-actions">
-              <ion-button routerLink="/products" size="large">
-                <ion-icon name="grid-outline" slot="start"></ion-icon>
-                Shop now
-              </ion-button>
-              <ion-button routerLink="/orders" size="large" fill="outline">
-                <ion-icon name="receipt-outline" slot="start"></ion-icon>
-                Orders
-              </ion-button>
-            </ion-buttons>
+      <!-- QUICK CATEGORIES -->
+      <div class="quick-categories">
+        <div class="category-item" *ngFor="let cat of quickCategories" [routerLink]="['/products']" [queryParams]="{ category: cat.title }">
+          <div class="icon-circle">
+            <ion-icon [name]="cat.icon"></ion-icon>
+          </div>
+          <span>{{ cat.title }}</span>
+        </div>
+        <div class="category-item" routerLink="/products">
+          <div class="icon-circle more-icon">
+            <ion-icon name="grid-outline"></ion-icon>
+          </div>
+          <span>View All</span>
+        </div>
+      </div>
 
-            <ion-row class="hero-stats">
-              <ion-col size="4" *ngFor="let stat of stats">
-                <ion-text>
-                  <strong>{{ stat.value }}</strong>
-                  <span>{{ stat.label }}</span>
-                </ion-text>
-              </ion-col>
-            </ion-row>
-          </ion-col>
+      <!-- NEW LAUNCHES SHELF -->
+      <div class="section-header">
+        <h2>New Launches</h2>
+        <span class="badge-new">NEW</span>
+      </div>
+      <div class="horizontal-shelf">
+        <div class="shelf-track">
+          <ion-card class="product-card mini-card" *ngFor="let product of newLaunches(products)" routerLink="/products">
+            <div class="product-gallery">
+              <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+            </div>
+            <ion-card-content>
+              <ion-card-title>{{ product.name }}</ion-card-title>
+              <p>{{ product.unit }}</p>
+              <div class="price-action">
+                <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                <ion-button size="small" fill="clear" (click)="addToCart(product); $event.stopPropagation()" *ngIf="quantityInCart(product.id, cart) === 0">
+                  <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+                </ion-button>
+                <div class="mini-stepper" *ngIf="quantityInCart(product.id, cart) > 0" (click)="$event.stopPropagation()">
+                  <span (click)="decrease(product, cart)">-</span>
+                  <strong>{{ quantityInCart(product.id, cart) }}</strong>
+                  <span (click)="increase(product, cart)">+</span>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
 
-          <ion-col size="12" size-lg="6">
-            <ion-img
-              class="hero-image"
-              src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1400&q=80"
-              alt="Fresh dairy farm"
-            ></ion-img>
+      <!-- BESTSELLERS GRID -->
+      <div class="section-header">
+        <h2>Bestsellers</h2>
+        <ion-button fill="clear" size="small" routerLink="/products">See All</ion-button>
+      </div>
+      <ion-grid fixed="true" class="bestsellers-grid">
+        <ion-row>
+          <ion-col size="6" size-md="4" size-lg="3" *ngFor="let product of featuredProducts(products)">
+            <ion-card class="product-card storefront-card">
+              <div class="product-gallery">
+                <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+                <ion-chip color="tertiary" class="floating-chip" *ngIf="product.tag">{{ product.tag }}</ion-chip>
+              </div>
+              <ion-card-content>
+                <ion-card-title>{{ product.name }}</ion-card-title>
+                <p class="unit-text">{{ product.unit }}</p>
+                <div class="price-action-full">
+                  <div class="price-box">
+                    <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                  </div>
+                  <ion-button size="small" expand="block" *ngIf="quantityInCart(product.id, cart) === 0; else stepper" (click)="addToCart(product)">
+                    ADD
+                  </ion-button>
+                  <ng-template #stepper>
+                    <div class="full-stepper">
+                      <ion-button fill="clear" size="small" (click)="decrease(product, cart)">-</ion-button>
+                      <strong>{{ quantityInCart(product.id, cart) }}</strong>
+                      <ion-button fill="clear" size="small" (click)="increase(product, cart)">+</ion-button>
+                    </div>
+                  </ng-template>
+                </div>
+              </ion-card-content>
+            </ion-card>
           </ion-col>
         </ion-row>
+      </ion-grid>
 
+      <!-- PROMISES ROW -->
+      <ion-grid fixed="true">
         <ion-row class="promise-row">
           <ion-col size="12" size-md="4" *ngFor="let card of promiseCards">
             <ion-item lines="none" class="promise-item">
@@ -56,77 +114,10 @@
             </ion-item>
           </ion-col>
         </ion-row>
-
-        <ion-row class="section-heading ion-align-items-center">
-          <ion-col>
-            <h2>Featured dairy</h2>
-            <p>Quick picks for today.</p>
-          </ion-col>
-          <ion-col size="auto">
-            <ion-button fill="clear" routerLink="/products">
-              View all
-              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="product-grid">
-          <ion-col size="12" size-md="6" size-xl="3" *ngFor="let product of featuredProducts(products)">
-            <ion-card class="product-card storefront-card">
-              <ion-img [src]="product.image" [alt]="product.name"></ion-img>
-              <ion-card-header>
-                <ion-chip color="tertiary">{{ product.tag }}</ion-chip>
-                <ion-card-title>{{ product.name }}</ion-card-title>
-                <ion-card-subtitle>{{ product.category }} | {{ product.unit }}</ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <p>{{ product.description }}</p>
-                <ion-item lines="none" class="price-row">
-                  <ion-label>
-                    <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
-                    <p>{{ product.stock }} available</p>
-                  </ion-label>
-
-                  <ion-buttons slot="end" class="cart-stepper" *ngIf="quantityInCart(product.id, cart) > 0; else addHome">
-                    <ion-button fill="clear" (click)="decrease(product, cart)" aria-label="Decrease quantity">
-                      <ion-icon name="remove-circle-outline"></ion-icon>
-                    </ion-button>
-                    <ion-badge color="success">{{ quantityInCart(product.id, cart) }}</ion-badge>
-                    <ion-button fill="clear" (click)="increase(product, cart)" aria-label="Increase quantity">
-                      <ion-icon name="add-circle-outline"></ion-icon>
-                    </ion-button>
-                  </ion-buttons>
-
-                  <ng-template #addHome>
-                    <ion-button slot="end" (click)="addToCart(product)" [disabled]="shopService.isUnavailable(product)">
-                      <ion-icon name="bag-outline" slot="start"></ion-icon>
-                      Add
-                    </ion-button>
-                  </ng-template>
-                </ion-item>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="section-heading">
-          <ion-col>
-            <h2>Shop by category</h2>
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="category-row">
-          <ion-col size="6" size-md="4" size-lg="2" *ngFor="let category of categoryNames(products)">
-            <ion-card class="category-card" routerLink="/products" [queryParams]="{ category: category }">
-              <ion-card-content>
-                <ion-icon name="pricetag-outline"></ion-icon>
-                <h3>{{ category }}</h3>
-                <p>{{ productsInCategory(products, category) }} items</p>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
       </ion-grid>
+      
+      <div style="height: 60px;"></div> <!-- Spacing for bottom nav -->
+
     </ng-container>
   </ng-container>
 </ion-content>

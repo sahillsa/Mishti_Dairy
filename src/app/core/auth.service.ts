@@ -1,70 +1,96 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { ReplaySubject, from, Observable, of } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { Auth, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from '@angular/fire/auth';
+import { Firestore, doc, docData, setDoc, collection, getDocs, updateDoc } from '@angular/fire/firestore';
 
-import { DUMMY_USERS } from './mock-data';
 import { User } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly currentUserKey = 'mishti_farmer_current_user';
-  private readonly registeredUsersKey = 'mishti_farmer_registered_users';
-  private users: User[] = [...DUMMY_USERS, ...this.readJson<User[]>(this.registeredUsersKey, [])];
-  private readonly currentUserSubject = new BehaviorSubject<User | null>(
-    this.readJson<User | null>(this.currentUserKey, null),
-  );
-
+  private readonly firestore = inject(Firestore);
+  private readonly authInstance = inject(Auth);
+  
+  private _currentUser: User | null = null;
+  private readonly currentUserSubject = new ReplaySubject<User | null>(1);
   readonly currentUser$ = this.currentUserSubject.asObservable();
 
-  get currentUser(): User | null {
-    return this.currentUserSubject.value;
+  constructor() {
+    const authInjection = inject(Auth);
+    authState(authInjection).pipe(
+      switchMap(firebaseUser => {
+        if (firebaseUser) {
+          return docData(doc(this.firestore, 'users', firebaseUser.uid)) as Observable<User>;
+        } else {
+          return of(null);
+        }
+      })
+    ).subscribe(user => {
+      this._currentUser = user;
+      this.currentUserSubject.next(user);
+    });
   }
 
-  login(email: string, password: string): boolean {
-    const normalizedEmail = email.trim().toLowerCase();
-    const foundUser = this.users.find(
-      (user) => user.email.toLowerCase() === normalizedEmail && user.password === password,
-    );
+  get currentUser(): User | null {
+    return this._currentUser;
+  }
 
-    if (!foundUser) {
+  async login(email: string, password: string): Promise<boolean> {
+    try {
+      await signInWithEmailAndPassword(this.authInstance, email.trim(), password);
+      return true;
+    } catch (e) {
+      console.error(e);
       return false;
     }
-
-    this.setCurrentUser(foundUser);
-    return true;
   }
 
-  register(details: Omit<User, 'id' | 'role'>): User | null {
-    const normalizedEmail = details.email.trim().toLowerCase();
-    const exists = this.users.some((user) => user.email.toLowerCase() === normalizedEmail);
-
-    if (exists) {
+  async register(details: Omit<User, 'id' | 'role'>, role: 'user' | 'admin' = 'user'): Promise<User | null> {
+    try {
+      const cred = await createUserWithEmailAndPassword(this.authInstance, details.email.trim(), details.password);
+      const newUser: User = {
+        ...details,
+        id: cred.user.uid as any, // Firebase UID is string, models might expect number but it's usually loosely typed
+        email: details.email.trim().toLowerCase(),
+        role
+      };
+      // For compatibility with any models expecting a string or number, we'll store the UID as string in Firestore
+      newUser.id = cred.user.uid as any;
+      await setDoc(doc(this.firestore, 'users', cred.user.uid), newUser);
+      return newUser;
+    } catch (e) {
+      console.error(e);
       return null;
     }
-
-    const registeredUsers = this.readJson<User[]>(this.registeredUsersKey, []);
-    const newUser: User = {
-      ...details,
-      id: Date.now(),
-      email: normalizedEmail,
-      role: 'user',
-    };
-
-    registeredUsers.push(newUser);
-    this.users = [...DUMMY_USERS, ...registeredUsers];
-    this.writeJson(this.registeredUsersKey, registeredUsers);
-    this.setCurrentUser(newUser);
-
-    return newUser;
   }
 
-  forgotPassword(email: string): boolean {
-    const normalizedEmail = email.trim().toLowerCase();
-    return this.users.some((user) => user.email.toLowerCase() === normalizedEmail);
+  async createAdmin(details: Omit<User, 'id' | 'role'>): Promise<User | null> {
+    // Note: This will log the current admin out and log them in as the new admin due to Firebase client SDK limits.
+    return this.register(details, 'admin');
   }
 
-  logout(): void {
-    this.currentUserSubject.next(null);
-    this.removeItem(this.currentUserKey);
+  async updateProfile(userId: string, data: Partial<User>): Promise<boolean> {
+    try {
+      await updateDoc(doc(this.firestore, 'users', userId), data as any);
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  async forgotPassword(email: string): Promise<boolean> {
+    try {
+      await sendPasswordResetEmail(this.authInstance, email.trim());
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  async logout(): Promise<void> {
+    await signOut(this.authInstance);
   }
 
   isAuthenticated(): boolean {
@@ -75,41 +101,8 @@ export class AuthService {
     return this.currentUser?.role === 'admin';
   }
 
-  getUsers(): User[] {
-    return [...this.users];
-  }
-
-  private setCurrentUser(user: User): void {
-    this.currentUserSubject.next(user);
-    this.writeJson(this.currentUserKey, user);
-  }
-
-  private readJson<T>(key: string, fallback: T): T {
-    try {
-      const value = this.storage?.getItem(key);
-      return value ? (JSON.parse(value) as T) : fallback;
-    } catch {
-      return fallback;
-    }
-  }
-
-  private writeJson(key: string, value: unknown): void {
-    try {
-      this.storage?.setItem(key, JSON.stringify(value));
-    } catch {
-      return;
-    }
-  }
-
-  private removeItem(key: string): void {
-    try {
-      this.storage?.removeItem(key);
-    } catch {
-      return;
-    }
-  }
-
-  private get storage(): Storage | null {
-    return typeof localStorage === 'undefined' ? null : localStorage;
+  async getUsers(): Promise<User[]> {
+    const snap = await getDocs(collection(this.firestore, 'users'));
+    return snap.docs.map(d => d.data() as User);
   }
 }

@@ -11,27 +11,56 @@
           </ion-col>
         </ion-row>
 
-        <ion-row class="catalog-tools">
-          <ion-col size="12" size-lg="5">
+        <!-- STICKY TOOLS HEADER -->
+        <div class="sticky-tools">
+          <div class="search-sort-row">
             <ion-searchbar
-              placeholder="Search milk, paneer, ghee..."
+              placeholder="Search products..."
               [(ngModel)]="searchTerm"
               debounce="150"
+              class="custom-searchbar"
             ></ion-searchbar>
-          </ion-col>
-          <ion-col size="12" size-lg="7">
-            <ion-segment [(ngModel)]="selectedCategory" scrollable="true">
-              <ion-segment-button *ngFor="let category of categories(products)" [value]="category">
-                <ion-label>{{ category }}</ion-label>
-              </ion-segment-button>
-            </ion-segment>
+            
+            <div class="sort-wrapper">
+              <ion-icon name="funnel-outline" class="sort-icon"></ion-icon>
+              <ion-select class="sort-select" [(ngModel)]="sortOption" interface="popover" aria-label="Sort options">
+                <ion-select-option value="default">Best Sellers</ion-select-option>
+                <ion-select-option value="priceAsc">Price: Low to High</ion-select-option>
+                <ion-select-option value="priceDesc">Price: High to Low</ion-select-option>
+                <ion-select-option value="nameAsc">Name: A to Z</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="chips-track">
+            <ion-chip 
+              *ngFor="let category of categories(products)" 
+              [class.active-chip]="selectedCategory === category"
+              (click)="selectedCategory = category"
+            >
+              <ion-label>{{ category }}</ion-label>
+            </ion-chip>
+          </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <ion-row *ngIf="filteredProducts(products).length === 0" class="empty-state-row">
+          <ion-col size="12" class="empty-state">
+            <ion-icon name="search-outline"></ion-icon>
+            <h3>No products found</h3>
+            <p>We couldn't find any items matching your search or filters.</p>
+            <ion-button fill="outline" shape="round" color="primary" (click)="searchTerm = ''; selectedCategory = 'All'; sortOption = 'default'">
+              Clear Filters
+            </ion-button>
           </ion-col>
         </ion-row>
 
         <ion-row class="product-grid">
           <ion-col size="12" size-md="6" size-xl="4" *ngFor="let product of filteredProducts(products)">
             <ion-card class="product-card storefront-card" [class.sold-out]="shopService.isUnavailable(product)">
-              <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+              <div class="product-gallery">
+                <ion-img *ngFor="let img of (product.images || [product.image])" [src]="img" [alt]="product.name"></ion-img>
+              </div>
               <ion-card-header>
                 <ion-chip [color]="shopService.isUnavailable(product) ? 'danger' : 'success'">
                   {{ shopService.isUnavailable(product) ? 'Out of stock' : product.tag }}
@@ -96,7 +125,9 @@
             </ion-toolbar>
           </ion-header>
           <ion-content class="ion-padding" *ngIf="selectedProduct as product">
-            <ion-img class="detail-image" [src]="product.image" [alt]="product.name"></ion-img>
+            <div class="product-gallery detail-gallery">
+              <ion-img *ngFor="let img of (product.images || [product.image])" [src]="img" [alt]="product.name"></ion-img>
+            </div>
             <ion-list lines="none">
               <ion-item>
                 <ion-label>

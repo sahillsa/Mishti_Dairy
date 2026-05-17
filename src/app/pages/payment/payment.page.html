@@ -19,6 +19,12 @@
           <ion-card-content>
             <form [formGroup]="form" (ngSubmit)="placeOrder()">
               <ion-list lines="full">
+                <ion-item *ngIf="savedAddresses.length > 0">
+                  <ion-icon name="bookmark-outline" slot="start"></ion-icon>
+                  <ion-select label="Saved addresses" labelPlacement="stacked" (ionChange)="selectSavedAddress($event)" placeholder="Choose an address...">
+                    <ion-select-option *ngFor="let addr of savedAddresses" [value]="addr">{{ addr }}</ion-select-option>
+                  </ion-select>
+                </ion-item>
                 <ion-item>
                   <ion-icon name="location-outline" slot="start"></ion-icon>
                   <ion-textarea

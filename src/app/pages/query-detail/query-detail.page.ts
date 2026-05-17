@@ -30,6 +30,10 @@ export class QueryDetailPage implements OnInit, OnDestroy {
     return this.authService.currentUser?.role === 'admin';
   }
 
+  isMyMessage(message: { authorRole: string }): boolean {
+    return message.authorRole === (this.isAdmin ? 'admin' : 'user');
+  }
+
   ngOnInit(): void {
     const queryId = this.route.snapshot.paramMap.get('queryId') ?? '';
     this.subscriptions.add(

@@ -4,6 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+import { firebaseConfig } from './firebase.config';
 
 import { AccountPage } from './pages/account/account.page';
 import { AdminControlPage } from './pages/admin-control/admin-control.page';
@@ -63,7 +68,14 @@ import { RegisterPage } from './pages/register/register.page';
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
-  providers: [provideBrowserGlobalErrorListeners(), { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
+    provideStorage(() => getStorage()),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

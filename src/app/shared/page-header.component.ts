@@ -26,8 +26,8 @@ export class PageHeaderComponent {
     return user.role === 'admin' ? '/admin/dashboard' : '/home';
   }
 
-  logout(): void {
-    this.authService.logout();
+  async logout(): Promise<void> {
+    await this.authService.logout();
     void this.router.navigateByUrl('/login');
   }
 }

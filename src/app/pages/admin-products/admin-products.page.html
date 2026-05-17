@@ -28,8 +28,20 @@
                 <ion-item>
                   <ion-textarea label="Description" labelPlacement="stacked" autoGrow="true" formControlName="description"></ion-textarea>
                 </ion-item>
-                <ion-item>
-                  <ion-input label="Image URL" labelPlacement="stacked" formControlName="image"></ion-input>
+                <ion-list-header>
+                  <ion-label>Product Images (Up to 5)</ion-label>
+                  <ion-button *ngIf="imageSlots.length < 5" (click)="addImageSlot()">Add Image</ion-button>
+                </ion-list-header>
+                
+                <ion-item *ngFor="let slot of imageSlots; let i = index">
+                  <div style="width: 100%; padding-top: 8px; padding-bottom: 8px;">
+                    <ion-label position="stacked">Image {{ i + 1 }} (Upload or URL)</ion-label>
+                    <input type="file" accept="image/*" (change)="onFileSelected($event, i)" style="margin-top: 8px; margin-bottom: 8px; display: block;" />
+                    <ion-input [value]="slot.url" (ionInput)="onUrlEntered($event, i)" placeholder="Or paste image URL" [disabled]="!!slot.file"></ion-input>
+                    <ion-button color="danger" fill="clear" size="small" (click)="removeImageSlot(i)" *ngIf="imageSlots.length > 1">
+                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
                 </ion-item>
                 <ion-item>
                   <ion-input label="Unit" labelPlacement="stacked" formControlName="unit"></ion-input>
@@ -47,9 +59,10 @@
                   <ion-input label="Rating" labelPlacement="stacked" type="number" formControlName="rating"></ion-input>
                 </ion-item>
               </ion-list>
-              <ion-button expand="block" type="submit">
-                <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-                Add product
+              <ion-button expand="block" type="submit" [disabled]="isUploading">
+                <ion-spinner *ngIf="isUploading" name="crescent" slot="start"></ion-spinner>
+                <ion-icon *ngIf="!isUploading" name="add-circle-outline" slot="start"></ion-icon>
+                {{ isUploading ? 'Uploading...' : 'Add product' }}
               </ion-button>
             </form>
           </ion-card-content>

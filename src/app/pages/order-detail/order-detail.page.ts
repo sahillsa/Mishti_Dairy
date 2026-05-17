@@ -32,6 +32,10 @@ export class OrderDetailPage implements OnInit, OnDestroy {
     return this.authService.currentUser?.role === 'admin';
   }
 
+  isMyMessage(message: { authorRole: string }): boolean {
+    return message.authorRole === (this.isAdmin ? 'admin' : 'user');
+  }
+
   ngOnInit(): void {
     const orderId = this.route.snapshot.paramMap.get('orderId') ?? '';
     this.subscriptions.add(

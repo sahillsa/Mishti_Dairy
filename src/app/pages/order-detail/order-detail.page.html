@@ -2,61 +2,81 @@
 
 <ion-content id="main-content" class="page-content" fullscreen="true">
   <ion-grid fixed="true">
-    <ion-row class="section-heading">
-      <ion-col>
-        <ion-button fill="clear" [routerLink]="backLink()">
-          <ion-icon name="chevron-forward-outline" slot="start" class="back-icon"></ion-icon>
+    <ion-row class="section-heading detail-heading">
+      <ion-col class="header-col">
+        <ion-button fill="clear" color="medium" [routerLink]="backLink()">
+          <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
           Back
         </ion-button>
-        <h1>{{ order?.id || 'Order' }}</h1>
-        <p *ngIf="order && canAccess">Customer, products, delivery, payment, tracking, and chat.</p>
+        <div class="title-row">
+          <h1>Order #{{ order?.id || 'Details' }}</h1>
+          <ion-chip *ngIf="order" [color]="statusColor(order)" class="status-badge">{{ order.status }}</ion-chip>
+        </div>
+        <p *ngIf="order && canAccess">Track your delivery, payment, products, and chat directly with us.</p>
       </ion-col>
     </ion-row>
 
     <ng-container *ngIf="order && canAccess; else unavailable">
       <ion-row>
         <ion-col size="12" size-lg="7">
-          <ion-card>
+          <ion-card class="detail-card invoice-card">
             <ion-card-header>
-              <ion-chip [color]="statusColor(order)">{{ order.status }}</ion-chip>
-              <ion-card-title>{{ order.userName }}</ion-card-title>
-              <ion-card-subtitle>{{ order.date | date: 'medium' }}</ion-card-subtitle>
+              <div class="card-icon-header">
+                <ion-icon name="receipt-outline" color="primary"></ion-icon>
+                <ion-card-title>Order Summary</ion-card-title>
+              </div>
+              <ion-card-subtitle>{{ order.date | date: 'fullDate' }} at {{ order.date | date: 'shortTime' }}</ion-card-subtitle>
             </ion-card-header>
             <ion-card-content>
-              <ion-list lines="full">
-                <ion-item *ngFor="let item of order.items">
+              <ion-list lines="none" class="items-list">
+                <ion-item *ngFor="let item of order.items" class="product-item">
                   <ion-label>
                     <h3>{{ item.name }}</h3>
-                    <p>{{ item.quantity }} x {{ item.unit }} | {{ item.price | currency: 'INR':'symbol':'1.0-0' }}</p>
+                    <p>{{ item.quantity }} x {{ item.unit }}</p>
                   </ion-label>
                   <ion-note slot="end">{{ item.price * item.quantity | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
                 </ion-item>
-                <ion-item>
-                  <ion-label><strong>Total</strong></ion-label>
+              </ion-list>
+              
+              <div class="invoice-totals">
+                <ion-item lines="none" class="total-row">
+                  <ion-label><strong>Grand Total</strong></ion-label>
                   <ion-note slot="end" color="dark">
                     <strong>{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</strong>
                   </ion-note>
                 </ion-item>
-                <ion-item>
+              </div>
+
+              <div class="payment-delivery-info">
+                <ion-item lines="none">
                   <ion-icon name="wallet-outline" slot="start"></ion-icon>
-                  <ion-label>{{ order.paymentMethod }} | {{ order.paymentStatus }}</ion-label>
+                  <ion-label>
+                    <h3>Payment</h3>
+                    <p>{{ order.paymentMethod }} &bull; {{ order.paymentStatus }}</p>
+                  </ion-label>
                 </ion-item>
-                <ion-item>
+                <ion-item lines="none">
                   <ion-icon name="time-outline" slot="start"></ion-icon>
-                  <ion-label>{{ order.deliverySlot }}</ion-label>
+                  <ion-label>
+                    <h3>Delivery Slot</h3>
+                    <p>{{ order.deliverySlot }}</p>
+                  </ion-label>
                 </ion-item>
-              </ion-list>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>
 
         <ion-col size="12" size-lg="5">
-          <ion-card>
+          <ion-card class="detail-card">
             <ion-card-header>
-              <ion-card-title>Delivery details</ion-card-title>
+              <div class="card-icon-header">
+                <ion-icon name="cube-outline" color="tertiary"></ion-icon>
+                <ion-card-title>Delivery details</ion-card-title>
+              </div>
             </ion-card-header>
             <ion-card-content>
-              <ion-list lines="none">
+              <ion-list lines="none" class="delivery-list">
                 <ion-item>
                   <ion-icon name="person-circle-outline" slot="start"></ion-icon>
                   <ion-label>
@@ -70,10 +90,10 @@
                 </ion-item>
                 <ion-item>
                   <ion-icon name="location-outline" slot="start"></ion-icon>
-                  <ion-label>{{ order.address }}</ion-label>
+                  <ion-label class="ion-text-wrap">{{ order.address }}</ion-label>
                 </ion-item>
-                <ion-item *ngIf="order.status === 'Shipped'">
-                  <ion-icon name="car-outline" slot="start"></ion-icon>
+                <ion-item *ngIf="order.status === 'Shipped'" class="tracking-item">
+                  <ion-icon name="car-outline" slot="start" color="warning"></ion-icon>
                   <ion-label>
                     <h3>{{ order.trackingCompany || 'Delivery partner' }}</h3>
                     <p>{{ order.trackingId || 'Tracking will be shared soon' }}</p>
@@ -112,33 +132,42 @@
 
       <ion-row>
         <ion-col size="12">
-          <ion-card class="thread-card">
+          <ion-card class="detail-card chat-card">
             <ion-card-header>
-              <ion-card-title>Order chat</ion-card-title>
-              <ion-card-subtitle>Messages between customer and admin</ion-card-subtitle>
+              <div class="card-icon-header">
+                <ion-icon name="chatbubbles-outline" color="success"></ion-icon>
+                <ion-card-title>Order Support</ion-card-title>
+              </div>
+              <ion-card-subtitle>Direct chat between you and the farm</ion-card-subtitle>
             </ion-card-header>
             <ion-card-content>
-              <ion-list class="chat-list" lines="none">
-                <ion-item *ngFor="let message of order.messages" [class.admin-message]="message.authorRole === 'admin'">
-                  <ion-label>
-                    <h3>{{ message.authorName }} <ion-note>{{ message.date | date: 'short' }}</ion-note></h3>
+              <div class="chat-container">
+                <div 
+                  class="chat-bubble-wrapper"
+                  *ngFor="let message of order.messages" 
+                  [ngClass]="{'is-mine': isMyMessage(message), 'is-theirs': !isMyMessage(message)}"
+                >
+                  <div class="chat-bubble">
+                    <span class="chat-author" *ngIf="message.authorRole === 'admin'">Farmer</span>
+                    <span class="chat-author" *ngIf="message.authorRole === 'user'">You</span>
                     <p>{{ message.message }}</p>
-                  </ion-label>
-                </ion-item>
-              </ion-list>
+                    <span class="chat-time">{{ message.date | date: 'shortTime' }}</span>
+                  </div>
+                </div>
+              </div>
 
-              <ion-item lines="full">
+              <div class="chat-input-area">
                 <ion-textarea
-                  label="Message"
-                  labelPlacement="stacked"
+                  placeholder="Type a message..."
                   autoGrow="true"
+                  rows="1"
                   [(ngModel)]="chatMessage"
+                  class="chat-textarea"
                 ></ion-textarea>
-              </ion-item>
-              <ion-button expand="block" (click)="sendMessage()">
-                <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon>
-                Send message
-              </ion-button>
+                <ion-button fill="clear" (click)="sendMessage()" [disabled]="!chatMessage?.trim()">
+                  <ion-icon name="send" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>

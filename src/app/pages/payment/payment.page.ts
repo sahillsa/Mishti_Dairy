@@ -33,6 +33,23 @@ export class PaymentPage {
 
   placedOrder: Order | null = null;
   errorMessage = '';
+
+  get savedAddresses(): string[] {
+    const user = this.authService.currentUser;
+    if (!user) return [];
+    if (user.addresses && user.addresses.length > 0) {
+      return user.addresses;
+    }
+    return user.address ? [user.address] : [];
+  }
+
+  selectSavedAddress(event: any): void {
+    const address = event.detail.value;
+    if (address) {
+      this.form.patchValue({ address });
+    }
+  }
+
   placeOrder(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();

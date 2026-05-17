@@ -36,4 +36,21 @@ export class OrdersPage {
 
     return 'warning';
   }
+
+  statusIcon(order: Order): string {
+    if (order.status === 'Delivered') return 'checkmark-circle';
+    if (order.status === 'Cancelled') return 'close-circle';
+    if (order.status === 'Shipped') return 'cube';
+    return 'time';
+  }
+
+  orderSummary(order: Order): string {
+    if (!order.items || order.items.length === 0) return 'No items';
+    const firstItem = order.items[0].name;
+    const remaining = order.items.length - 1;
+    if (remaining > 0) {
+      return `${firstItem} + ${remaining} more item${remaining > 1 ? 's' : ''}`;
+    }
+    return firstItem;
+  }
 }

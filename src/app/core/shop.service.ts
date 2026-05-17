@@ -1,5 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Firestore, collection, collectionData, doc, docData, setDoc } from '@angular/fire/firestore';
 
 import { AuthService } from './auth.service';
 import { PRODUCTS, SEEDED_ORDERS, SEEDED_QUERIES } from './mock-data';
@@ -18,6 +20,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ShopService {
   private readonly authService = inject(AuthService);
+  private readonly firestore = inject(Firestore);
   private readonly productsKey = 'mishti_farmer_products';
   private readonly ordersKey = 'mishti_farmer_orders';
   private readonly queriesKey = 'mishti_farmer_queries';
@@ -37,10 +40,38 @@ export class ShopService {
   readonly cart$ = this.cartSubject.asObservable();
   readonly orders$ = this.ordersSubject.asObservable();
   readonly queries$ = this.queriesSubject.asObservable();
+  
+  readonly bannerUrl$ = docData(doc(this.firestore, 'settings/home')).pipe(
+    map((data: any) => data?.bannerUrl || 'https://images.unsplash.com/photo-1601662528567-526cd06f6582?auto=format&fit=crop&w=1200&q=80')
+  );
 
   constructor() {
     this.authService.currentUser$.subscribe(() => {
       this.cartSubject.next(this.readCart());
+    });
+
+    collectionData(collection(this.firestore, 'products')).subscribe((data) => {
+      if (data && data.length > 0) {
+        this.productsSubject.next(data as Product[]);
+      } else {
+        PRODUCTS.forEach(p => setDoc(doc(this.firestore, 'products', p.id.toString()), p));
+      }
+    });
+
+    collectionData(collection(this.firestore, 'orders')).subscribe((data) => {
+      if (data && data.length > 0) {
+        this.ordersSubject.next(data as Order[]);
+      } else {
+        SEEDED_ORDERS.forEach(o => setDoc(doc(this.firestore, 'orders', o.id.toString()), o));
+      }
+    });
+
+    collectionData(collection(this.firestore, 'queries')).subscribe((data) => {
+      if (data && data.length > 0) {
+        this.queriesSubject.next(data as HelpQuery[]);
+      } else {
+        SEEDED_QUERIES.forEach(q => setDoc(doc(this.firestore, 'queries', q.id.toString()), q));
+      }
     });
   }
 
@@ -172,6 +203,7 @@ export class ShopService {
     this.persistProducts(products);
     this.ordersSubject.next(orders);
     this.writeJson(this.ordersKey, orders);
+    setDoc(doc(this.firestore, 'orders', order.id.toString()), order).catch(console.error);
     this.clearCart();
 
     return order;
@@ -200,6 +232,7 @@ export class ShopService {
     const queries = [query, ...this.queriesSubject.value];
     this.queriesSubject.next(queries);
     this.writeJson(this.queriesKey, queries);
+    setDoc(doc(this.firestore, 'queries', query.id.toString()), query).catch(console.error);
 
     return query;
   }
@@ -271,6 +304,8 @@ export class ShopService {
 
     this.ordersSubject.next(orders);
     this.writeJson(this.ordersKey, orders);
+    const updatedOrder = orders.find(o => o.id === orderId);
+    if (updatedOrder) setDoc(doc(this.firestore, 'orders', orderId.toString()), updatedOrder).catch(console.error);
   }
 
   addOrderMessage(orderId: string, message: string): void {
@@ -289,6 +324,8 @@ export class ShopService {
 
     this.ordersSubject.next(orders);
     this.writeJson(this.ordersKey, orders);
+    const updatedOrder = orders.find(o => o.id === orderId);
+    if (updatedOrder) setDoc(doc(this.firestore, 'orders', orderId.toString()), updatedOrder).catch(console.error);
   }
 
   updateQueryStatus(queryId: string, status: QueryStatus): void {
@@ -308,6 +345,8 @@ export class ShopService {
 
     this.queriesSubject.next(queries);
     this.writeJson(this.queriesKey, queries);
+    const updatedQuery = queries.find(q => q.id === queryId);
+    if (updatedQuery) setDoc(doc(this.firestore, 'queries', queryId.toString()), updatedQuery).catch(console.error);
   }
 
   addQueryMessage(queryId: string, message: string): void {
@@ -326,6 +365,8 @@ export class ShopService {
 
     this.queriesSubject.next(queries);
     this.writeJson(this.queriesKey, queries);
+    const updatedQuery = queries.find(q => q.id === queryId);
+    if (updatedQuery) setDoc(doc(this.firestore, 'queries', queryId.toString()), updatedQuery).catch(console.error);
   }
 
   isUnavailable(product: Product): boolean {
@@ -364,6 +405,9 @@ export class ShopService {
   private persistProducts(products: Product[]): void {
     this.productsSubject.next(products);
     this.writeJson(this.productsKey, products);
+    products.forEach(p => {
+      setDoc(doc(this.firestore, 'products', p.id.toString()), p).catch(console.error);
+    });
   }
 
   private saveCart(cart: CartItem[]): void {

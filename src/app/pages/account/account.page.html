@@ -12,12 +12,19 @@
     <ion-row>
       <ion-col size="12" size-lg="5">
         <ion-card>
-          <ion-card-header>
-            <ion-avatar class="profile-avatar">
-              <ion-icon name="person-circle-outline"></ion-icon>
-            </ion-avatar>
-            <ion-card-title>{{ user.name }}</ion-card-title>
-            <ion-card-subtitle>{{ user.role | titlecase }}</ion-card-subtitle>
+          <ion-card-header class="ion-no-padding">
+            <ion-item lines="none" style="--background: transparent; margin-top: 10px;">
+              <ion-avatar slot="start" class="profile-avatar">
+                <ion-icon name="person-circle-outline"></ion-icon>
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ user.name }}</h2>
+                <p>{{ user.role | titlecase }}</p>
+              </ion-label>
+              <ion-button slot="end" fill="clear" (click)="editName(user)">
+                <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-item>
           </ion-card-header>
           <ion-card-content>
             <ion-list lines="none">
@@ -29,12 +36,33 @@
                 <ion-icon name="call-outline" slot="start"></ion-icon>
                 <ion-label>{{ user.mobile }}</ion-label>
               </ion-item>
-              <ion-item>
-                <ion-icon name="location-outline" slot="start"></ion-icon>
-                <ion-label>{{ user.address }}</ion-label>
-              </ion-item>
             </ion-list>
             <ion-button expand="block" color="danger" fill="outline" (click)="logout()">Logout</ion-button>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0;">
+            <ion-card-title>Saved Addresses</ion-card-title>
+            <ion-button fill="clear" (click)="addAddress(user)">Add</ion-button>
+          </ion-card-header>
+          <ion-card-content>
+            <ng-container *ngIf="getAddresses(user) as addresses">
+              <ion-list lines="full" *ngIf="addresses.length > 0; else noAddresses">
+                <ion-item *ngFor="let addr of addresses; let i = index">
+                  <ion-label class="ion-text-wrap">{{ addr }}</ion-label>
+                  <ion-button slot="end" fill="clear" (click)="editAddress(user, i)">
+                    <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                  <ion-button slot="end" fill="clear" color="danger" (click)="deleteAddress(user, i)">
+                    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-list>
+              <ng-template #noAddresses>
+                <p>No addresses saved.</p>
+              </ng-template>
+            </ng-container>
           </ion-card-content>
         </ion-card>
       </ion-col>

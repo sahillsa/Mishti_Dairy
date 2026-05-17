@@ -7,6 +7,7 @@ export interface User {
   password: string;
   mobile: string;
   address: string;
+  addresses?: string[];
   role: UserRole;
 }
 
@@ -16,6 +17,7 @@ export interface Product {
   category: string;
   description: string;
   image: string;
+  images?: string[];
   price: number;
   unit: string;
   tag: string;
@@ -93,6 +95,7 @@ export interface ProductDraft {
   category: string;
   description: string;
   image: string;
+  images?: string[];
   price: number;
   unit: string;
   tag: string;

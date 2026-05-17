@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .mobile-nav {
   display: none;
 
@@ -11,11 +15,21 @@
     --color: #6f6250;
     --color-selected: #18715a;
     font-weight: 700;
+    
+    &.tab-selected {
+      --color: #18715a;
+      color: #18715a;
+    }
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .mobile-nav {
     display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
   }
 }

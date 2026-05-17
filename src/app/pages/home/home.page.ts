@@ -14,6 +14,7 @@ export class HomePage {
   readonly shopService = inject(ShopService);
   readonly products$ = this.shopService.products$;
   readonly cart$ = this.shopService.cart$;
+  readonly bannerUrl$ = this.shopService.bannerUrl$;
   readonly stats = [
     { label: 'Dairy products', value: '12+' },
     { label: 'Morning slots', value: '4' },
@@ -24,9 +25,26 @@ export class HomePage {
     { icon: 'cube-outline', label: 'Live stock', detail: 'Inventory visible before checkout' },
     { icon: 'card-outline', label: 'Razorpay ready', detail: 'Demo payment flow included' },
   ];
+  readonly banners = [
+    { image: 'assets/banners/banner_milk.png', title: 'Farm Fresh Milk', subtitle: 'Delivered daily to your door', link: '/products', queryParams: { category: 'Milk' } },
+    { image: 'assets/banners/banner_ghee.png', title: 'Pure Cow Ghee', subtitle: 'Rich, golden, and aromatic', link: '/products', queryParams: { category: 'Ghee' } },
+    { image: 'assets/banners/banner_sweets.png', title: 'Festive Sweets', subtitle: 'New arrivals for the season', link: '/products', queryParams: { category: 'Sweets' } }
+  ];
+
+  readonly quickCategories = [
+    { title: 'Milk', icon: 'water-outline' },
+    { title: 'Curd', icon: 'snow-outline' },
+    { title: 'Ghee', icon: 'flame-outline' },
+    { title: 'Sweets', icon: 'rose-outline' },
+    { title: 'Paneer', icon: 'cube-outline' },
+  ];
 
   featuredProducts(products: Product[]): Product[] {
     return products.filter((product) => !this.shopService.isUnavailable(product)).slice(0, 4);
+  }
+
+  newLaunches(products: Product[]): Product[] {
+    return products.slice(-6).reverse();
   }
 
   categoryNames(products: Product[]): string[] {

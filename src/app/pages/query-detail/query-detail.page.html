@@ -68,27 +68,32 @@
               <ion-card-subtitle>Customer and admin conversation</ion-card-subtitle>
             </ion-card-header>
             <ion-card-content>
-              <ion-list class="chat-list" lines="none">
-                <ion-item *ngFor="let message of query.messages" [class.admin-message]="message.authorRole === 'admin'">
-                  <ion-label>
-                    <h3>{{ message.authorName }} <ion-note>{{ message.date | date: 'short' }}</ion-note></h3>
+              <div class="chat-container">
+                <div 
+                  class="chat-bubble-wrapper"
+                  *ngFor="let message of query.messages" 
+                  [ngClass]="{'is-mine': isMyMessage(message), 'is-theirs': !isMyMessage(message)}"
+                >
+                  <div class="chat-bubble">
+                    <span class="chat-author">{{ message.authorName }}</span>
                     <p>{{ message.message }}</p>
-                  </ion-label>
-                </ion-item>
-              </ion-list>
+                    <span class="chat-time">{{ message.date | date: 'shortTime' }}</span>
+                  </div>
+                </div>
+              </div>
 
-              <ion-item lines="full">
+              <div class="chat-input-area">
                 <ion-textarea
-                  label="Message"
-                  labelPlacement="stacked"
+                  placeholder="Type a message..."
                   autoGrow="true"
+                  rows="1"
                   [(ngModel)]="chatMessage"
+                  class="chat-textarea"
                 ></ion-textarea>
-              </ion-item>
-              <ion-button expand="block" (click)="sendMessage()">
-                <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon>
-                Send message
-              </ion-button>
+                <ion-button fill="clear" (click)="sendMessage()" [disabled]="!chatMessage?.trim()">
+                  <ion-icon name="send" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>

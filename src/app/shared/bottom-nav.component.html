@@ -1,49 +1,50 @@
-<ion-footer class="mobile-nav" *ngIf="user$ | async as user">
-  <ion-tab-bar *ngIf="user.role === 'admin'; else userNav">
-    <ion-tab-button routerLink="/admin/dashboard">
+<ion-footer class="mobile-nav">
+  <!-- Admin Tabs -->
+  <ion-tab-bar *ngIf="(user$ | async)?.role === 'admin'">
+    <ion-tab-button routerLink="/admin/dashboard" routerLinkActive="tab-selected">
       <ion-icon name="speedometer-outline"></ion-icon>
       <ion-label>Admin</ion-label>
     </ion-tab-button>
-    <ion-tab-button routerLink="/admin/orders">
+    <ion-tab-button routerLink="/admin/orders" routerLinkActive="tab-selected">
       <ion-icon name="receipt-outline"></ion-icon>
       <ion-label>Orders</ion-label>
     </ion-tab-button>
-    <ion-tab-button routerLink="/admin/products">
+    <ion-tab-button routerLink="/admin/products" routerLinkActive="tab-selected">
       <ion-icon name="cube-outline"></ion-icon>
       <ion-label>Stock</ion-label>
     </ion-tab-button>
-    <ion-tab-button routerLink="/admin/queries">
+    <ion-tab-button routerLink="/admin/queries" routerLinkActive="tab-selected">
       <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
       <ion-label>Queries</ion-label>
     </ion-tab-button>
-    <ion-tab-button routerLink="/admin/control">
+    <ion-tab-button routerLink="/admin/control" routerLinkActive="tab-selected">
       <ion-icon name="settings-outline"></ion-icon>
       <ion-label>Control</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 
-  <ng-template #userNav>
-    <ion-tab-bar>
-      <ion-tab-button routerLink="/home">
-        <ion-icon name="home-outline"></ion-icon>
-        <ion-label>Home</ion-label>
-      </ion-tab-button>
-      <ion-tab-button routerLink="/products">
-        <ion-icon name="grid-outline"></ion-icon>
-        <ion-label>Shop</ion-label>
-      </ion-tab-button>
-      <ion-tab-button routerLink="/cart">
-        <ion-icon name="bag-outline"></ion-icon>
-        <ion-label>Cart</ion-label>
-      </ion-tab-button>
-      <ion-tab-button routerLink="/orders">
-        <ion-icon name="receipt-outline"></ion-icon>
-        <ion-label>Orders</ion-label>
-      </ion-tab-button>
-      <ion-tab-button routerLink="/help">
-        <ion-icon name="help-circle-outline"></ion-icon>
-        <ion-label>Help</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ng-template>
+  <!-- User / Guest Tabs -->
+  <ion-tab-bar *ngIf="(user$ | async)?.role !== 'admin'">
+    <ion-tab-button routerLink="/home" routerLinkActive="tab-selected">
+      <ion-icon name="home-outline"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/products" routerLinkActive="tab-selected">
+      <ion-icon name="grid-outline"></ion-icon>
+      <ion-label>Shop</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/cart" routerLinkActive="tab-selected">
+      <ion-icon name="bag-outline"></ion-icon>
+      <ion-label>Cart</ion-label>
+      <ion-badge color="danger" *ngIf="cartCount$ | async as count">{{ count }}</ion-badge>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/orders" routerLinkActive="tab-selected">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <ion-label>Orders</ion-label>
+    </ion-tab-button>
+    <ion-tab-button routerLink="/account" routerLinkActive="tab-selected">
+      <ion-icon name="person-circle-outline"></ion-icon>
+      <ion-label>Account</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
 </ion-footer>
