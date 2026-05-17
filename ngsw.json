@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1778996911627,
+  "timestamp": 1778997263035,
   "index": "/Mishti_Dairy/index.html",
   "assetGroups": [
     {
@@ -76,7 +76,7 @@
         "/Mishti_Dairy/manifest.webmanifest",
         "/Mishti_Dairy/polyfills.bf76674afdc3b455.js",
         "/Mishti_Dairy/runtime.07dc02a51a0a8465.js",
-        "/Mishti_Dairy/styles.5172f68eee9d50b4.css"
+        "/Mishti_Dairy/styles.af64e0b4d8898514.css"
       ],
       "patterns": []
     },
@@ -160,12 +160,12 @@
     "/Mishti_Dairy/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
     "/Mishti_Dairy/icons/icon-192.png": "65870bcf43222e78276d39187eff0c1f93218fac",
     "/Mishti_Dairy/icons/icon-512.png": "497653a149b34566c731f986e48885a5174f3605",
-    "/Mishti_Dairy/index.html": "6feaf93e1fa7997c96ad59da894a39a8d487f908",
+    "/Mishti_Dairy/index.html": "244e59b2707d4a196c061cdcb52510231792c1a8",
     "/Mishti_Dairy/main.cf134881c887b573.js": "0a840fd296b8d6637a36159f74738b8669fb8767",
     "/Mishti_Dairy/manifest.webmanifest": "0b35c517fc857cefc57d7d948235a9e2e00e7aa1",
     "/Mishti_Dairy/polyfills.bf76674afdc3b455.js": "40946f0febac06fe4490cf63d0df62ec28ba1c65",
     "/Mishti_Dairy/runtime.07dc02a51a0a8465.js": "ce36fad5f554be25084098c502dd38f0f000bd21",
-    "/Mishti_Dairy/styles.5172f68eee9d50b4.css": "ba0be6a390a11d52df592b799c99c91f24eb0230"
+    "/Mishti_Dairy/styles.af64e0b4d8898514.css": "7a52d5e51e6e3202298fd8c1ee6d023bf34a9285"
   },
   "navigationUrls": [
     {
