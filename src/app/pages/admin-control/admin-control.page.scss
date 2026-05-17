@@ -1,6 +1,8 @@
 .module-card {
   height: 100%;
   margin: 8px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
 
   ion-card-content {
     display: grid;
@@ -8,7 +10,7 @@
   }
 
   ion-icon {
-    color: #315f9d;
+    color: var(--ion-color-primary, #315f9d);
     font-size: 34px;
   }
 
@@ -16,4 +18,115 @@
     font-size: 1.15rem;
     margin: 0;
   }
+}
+
+.header-segment-wrapper {
+  background: var(--ion-background-color);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.custom-segment {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.text-muted {
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}
+
+.add-btn {
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+.admin-profile-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+  background: var(--ion-card-background, #fff);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--ion-color-primary);
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+  }
+
+  h3 {
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+
+  .role-chip {
+    --background: rgba(var(--ion-color-primary-rgb), 0.1);
+    color: var(--ion-color-primary);
+    font-weight: 600;
+  }
+}
+
+.premium-form-card {
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  background: var(--ion-card-background, #fff);
+
+  ion-card-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ion-color-dark);
+  }
+  
+  .input-group {
+    margin-bottom: 16px;
+    
+    ion-input {
+      --background: rgba(0,0,0,0.03);
+      --border-radius: 12px;
+      --padding-start: 16px;
+      font-weight: 500;
+    }
+  }
+
+  .submit-btn {
+    --border-radius: 12px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    font-weight: 700;
+    font-size: 16px;
+    --box-shadow: 0 8px 24px rgba(var(--ion-color-primary-rgb), 0.3);
+    margin-top: 24px;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

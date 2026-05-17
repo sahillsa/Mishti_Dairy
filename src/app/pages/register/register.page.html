@@ -19,7 +19,8 @@
           <ion-card-subtitle>Customer role is assigned automatically</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <form [formGroup]="form" (ngSubmit)="register()">
+          <!-- Step 1: Registration Details -->
+          <form [formGroup]="form" (ngSubmit)="register()" *ngIf="step === 'details'">
             <ion-list lines="full">
               <ion-item>
                 <ion-input label="Full name" labelPlacement="stacked" formControlName="name"></ion-input>
@@ -31,9 +32,16 @@
                 <ion-input
                   label="Password"
                   labelPlacement="stacked"
-                  type="password"
+                  [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
-                ></ion-input>
+                >
+                  <ion-icon
+                    slot="end"
+                    [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                    class="password-icon"
+                    (click)="togglePassword()"
+                  ></ion-icon>
+                </ion-input>
               </ion-item>
               <ion-item>
                 <ion-input label="Mobile number" labelPlacement="stacked" formControlName="mobile"></ion-input>
@@ -50,10 +58,18 @@
 
             <ion-note color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-note>
 
-            <ion-button expand="block" type="submit">Create account</ion-button>
+            <ion-button expand="block" type="submit" class="ion-margin-top">Create Account</ion-button>
           </form>
 
-          <div class="auth-links">
+          <!-- Step 2: Success Message -->
+          <div class="success-message ion-text-center ion-padding" *ngIf="step === 'success'">
+            <ion-icon name="mail-unread-outline" color="primary" style="font-size: 64px; margin-bottom: 16px;"></ion-icon>
+            <h2>Check Your Email!</h2>
+            <p style="color: var(--ion-color-medium); line-height: 1.5;">We've sent a verification link to your email address. Please check your inbox and click the link to verify your account before logging in.</p>
+            <ion-button expand="block" class="ion-margin-top" routerLink="/login">Go to Login</ion-button>
+          </div>
+
+          <div class="auth-links" *ngIf="step === 'details'">
             <ion-button fill="clear" routerLink="/login">Back to login</ion-button>
           </div>
         </ion-card-content>

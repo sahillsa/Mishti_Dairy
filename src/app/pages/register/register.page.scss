@@ -1,3 +1,13 @@
-:host {
-  display: block;
+.password-icon {
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--ion-color-medium);
+  margin-top: 10px;
+}
+
+.otp-header p {
+  color: var(--ion-color-medium);
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.4;
 }

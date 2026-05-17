@@ -18,6 +18,9 @@ export class RegisterPage {
   private readonly router = inject(Router);
   private readonly loadingCtrl = inject(LoadingController);
 
+  step: 'details' | 'success' = 'details';
+  showPassword = false;
+
   readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
@@ -27,11 +30,17 @@ export class RegisterPage {
   });
 
   errorMessage = '';
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   async register(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+    this.errorMessage = '';
 
     const loading = await this.loadingCtrl.create({
       message: 'Creating account...',
@@ -44,10 +53,10 @@ export class RegisterPage {
     await loading.dismiss();
 
     if (!user) {
-      this.errorMessage = 'This email is already registered.';
+      this.errorMessage = 'This email is already registered or an error occurred.';
       return;
     }
 
-    void this.router.navigateByUrl('/home');
+    this.step = 'success';
   }
 }

@@ -1,8 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { ReplaySubject, from, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { Auth, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from '@angular/fire/auth';
-import { Firestore, doc, docData, setDoc, collection, getDocs, updateDoc } from '@angular/fire/firestore';
+import { initializeApp, deleteApp } from 'firebase/app';
+import { getAuth as getFirebaseAuth } from 'firebase/auth';
+import { firebaseConfig } from '../firebase.config';
+import { Auth, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification } from '@angular/fire/auth';
+import { Firestore, doc, docData, setDoc, collection, getDocs, updateDoc, query, where } from '@angular/fire/firestore';
 
 import { User } from './models';
 
@@ -48,13 +51,17 @@ export class AuthService {
   async register(details: Omit<User, 'id' | 'role'>, role: 'user' | 'admin' = 'user'): Promise<User | null> {
     try {
       const cred = await createUserWithEmailAndPassword(this.authInstance, details.email.trim(), details.password);
+      
+      // Send the native Firebase email verification link (100% Free)
+      await sendEmailVerification(cred.user);
+
       const newUser: User = {
         ...details,
-        id: cred.user.uid as any, // Firebase UID is string, models might expect number but it's usually loosely typed
+        id: cred.user.uid as any,
         email: details.email.trim().toLowerCase(),
         role
       };
-      // For compatibility with any models expecting a string or number, we'll store the UID as string in Firestore
+      
       newUser.id = cred.user.uid as any;
       await setDoc(doc(this.firestore, 'users', cred.user.uid), newUser);
       return newUser;
@@ -65,8 +72,32 @@ export class AuthService {
   }
 
   async createAdmin(details: Omit<User, 'id' | 'role'>): Promise<User | null> {
-    // Note: This will log the current admin out and log them in as the new admin due to Firebase client SDK limits.
-    return this.register(details, 'admin');
+    try {
+      // Use a secondary app to create a user without logging out the current admin
+      const secondaryApp = initializeApp(firebaseConfig, 'SecondaryApp');
+      const secondaryAuth = getFirebaseAuth(secondaryApp);
+      
+      const cred = await createUserWithEmailAndPassword(secondaryAuth, details.email.trim(), details.password);
+      
+      const newUser: User = {
+        ...details,
+        id: cred.user.uid as any,
+        email: details.email.trim().toLowerCase(),
+        role: 'admin'
+      };
+      
+      newUser.id = cred.user.uid as any;
+      await setDoc(doc(this.firestore, 'users', cred.user.uid), newUser);
+      
+      // Clean up secondary app
+      await secondaryAuth.signOut();
+      await deleteApp(secondaryApp);
+      
+      return newUser;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
 
   async updateProfile(userId: string, data: Partial<User>): Promise<boolean> {
@@ -103,6 +134,12 @@ export class AuthService {
 
   async getUsers(): Promise<User[]> {
     const snap = await getDocs(collection(this.firestore, 'users'));
+    return snap.docs.map(d => d.data() as User);
+  }
+
+  async getAdmins(): Promise<User[]> {
+    const q = query(collection(this.firestore, 'users'), where('role', '==', 'admin'));
+    const snap = await getDocs(q);
     return snap.docs.map(d => d.data() as User);
   }
 }

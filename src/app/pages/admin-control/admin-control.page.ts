@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { LoadingController, ToastController } from '@ionic/angular';
+import { AuthService } from '../../core/auth.service';
+import { User } from '../../core/models';
 
 @Component({
   selector: 'app-admin-control-page',
@@ -7,7 +11,68 @@ import { Component } from '@angular/core';
   templateUrl: './admin-control.page.html',
   styleUrl: './admin-control.page.scss',
 })
-export class AdminControlPage {
+export class AdminControlPage implements OnInit {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly loadingCtrl = inject(LoadingController);
+  private readonly toastCtrl = inject(ToastController);
+
+  activeTab: 'modules' | 'team' = 'team';
+  showAddForm = false;
+  admins: User[] = [];
+
+  readonly form = this.formBuilder.nonNullable.group({
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    mobile: ['', [Validators.required, Validators.minLength(10)]],
+  });
+
+  errorMessage = '';
+
+  ngOnInit() {
+    this.loadAdmins();
+  }
+
+  async loadAdmins() {
+    this.admins = await this.authService.getAdmins();
+  }
+
+  async createSubadmin() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.errorMessage = '';
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Creating subadmin...',
+      spinner: 'crescent'
+    });
+    await loading.present();
+
+    const result = await this.authService.createAdmin({
+      ...this.form.getRawValue(),
+      address: 'Admin Office' // Default address for subadmins
+    });
+    
+    await loading.dismiss();
+
+    if (result) {
+      const toast = await this.toastCtrl.create({
+        message: 'Subadmin created successfully!',
+        duration: 2000,
+        color: 'success'
+      });
+      await toast.present();
+      this.form.reset();
+      this.showAddForm = false;
+      this.loadAdmins();
+    } else {
+      this.errorMessage = 'Failed to create subadmin. Email might already exist.';
+    }
+  }
+
   readonly modules = [
     {
       title: 'Customers',

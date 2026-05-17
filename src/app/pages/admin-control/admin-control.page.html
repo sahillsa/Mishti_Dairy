@@ -1,26 +1,124 @@
 <app-page-header title="Admin Control"></app-page-header>
 
 <ion-content id="main-content" class="page-content" fullscreen="true">
-  <ion-grid fixed="true">
-    <ion-row class="section-heading">
-      <ion-col>
-        <h1>Future control center</h1>
-        <p>Admin modules reserved for the next API and database phase.</p>
-      </ion-col>
-    </ion-row>
+  <div class="header-segment-wrapper ion-padding-top">
+    <ion-segment [(ngModel)]="activeTab" mode="ios" class="custom-segment">
+      <ion-segment-button value="modules">
+        <ion-label>Modules</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="team">
+        <ion-label>Team Management</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
 
-    <ion-row>
-      <ion-col size="12" size-md="6" size-xl="4" *ngFor="let module of modules">
-        <ion-card class="module-card">
-          <ion-card-content>
-            <ion-icon [name]="module.icon"></ion-icon>
-            <ion-chip color="medium">{{ module.status }}</ion-chip>
-            <h2>{{ module.title }}</h2>
-            <p>{{ module.detail }}</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
+  <ion-grid fixed="true" class="ion-padding-top">
+    
+    <!-- MODULES TAB -->
+    <ng-container *ngIf="activeTab === 'modules'">
+      <ion-row class="section-heading">
+        <ion-col>
+          <h1>Future control center</h1>
+          <p>Admin modules reserved for the next API and database phase.</p>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="12" size-md="6" size-xl="4" *ngFor="let module of modules">
+          <ion-card class="module-card">
+            <ion-card-content>
+              <ion-icon [name]="module.icon"></ion-icon>
+              <ion-chip color="medium">{{ module.status }}</ion-chip>
+              <h2>{{ module.title }}</h2>
+              <p>{{ module.detail }}</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ng-container>
+
+    <!-- TEAM MANAGEMENT TAB -->
+    <ng-container *ngIf="activeTab === 'team'">
+      <!-- Admin List View -->
+      <div *ngIf="!showAddForm" class="team-view fade-in">
+        <ion-row class="ion-align-items-center ion-margin-bottom">
+          <ion-col>
+            <h2>Admin Roles</h2>
+            <p class="text-muted">Manage all administrators and their access.</p>
+          </ion-col>
+          <ion-col size="auto">
+            <ion-button (click)="showAddForm = true" class="add-btn">
+              <ion-icon slot="start" name="person-add-outline"></ion-icon>
+              Add Admin
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let admin of admins">
+            <ion-card class="admin-profile-card">
+              <ion-card-content class="ion-text-center">
+                <div class="avatar">
+                  {{ admin.name.charAt(0).toUpperCase() }}
+                </div>
+                <h3>{{ admin.name }}</h3>
+                <p>{{ admin.email }}</p>
+                <ion-chip color="primary" class="role-chip">
+                  <ion-icon name="shield-checkmark-outline"></ion-icon>
+                  <ion-label>Admin</ion-label>
+                </ion-chip>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </div>
+
+      <!-- Add Admin Form View -->
+      <div *ngIf="showAddForm" class="form-view fade-in">
+        <ion-row>
+          <ion-col size="12" size-md="8" offset-md="2" size-lg="6" offset-lg="3">
+            <ion-card class="premium-form-card">
+              <ion-card-header>
+                <ion-row class="ion-align-items-center">
+                  <ion-col>
+                    <ion-card-title>Create Subadmin</ion-card-title>
+                    <ion-card-subtitle>Create a new admin account with full access.</ion-card-subtitle>
+                  </ion-col>
+                  <ion-col size="auto">
+                    <ion-button fill="clear" color="medium" (click)="showAddForm = false">
+                      <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-card-header>
+              <ion-card-content>
+                <form [formGroup]="form" (ngSubmit)="createSubadmin()">
+                  <div class="input-group">
+                    <ion-input label="Full name" labelPlacement="stacked" formControlName="name" fill="outline"></ion-input>
+                  </div>
+                  <div class="input-group">
+                    <ion-input label="Email" labelPlacement="stacked" type="email" formControlName="email" fill="outline"></ion-input>
+                  </div>
+                  <div class="input-group">
+                    <ion-input label="Password" labelPlacement="stacked" type="password" formControlName="password" fill="outline"></ion-input>
+                  </div>
+                  <div class="input-group">
+                    <ion-input label="Mobile number" labelPlacement="stacked" formControlName="mobile" fill="outline"></ion-input>
+                  </div>
+                  
+                  <ion-note color="danger" *ngIf="errorMessage" class="ion-margin-bottom d-block">{{ errorMessage }}</ion-note>
+                  
+                  <ion-button expand="block" type="submit" class="ion-margin-top submit-btn">
+                    Create Admin Account
+                  </ion-button>
+                </form>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ng-container>
+
   </ion-grid>
 </ion-content>
 
