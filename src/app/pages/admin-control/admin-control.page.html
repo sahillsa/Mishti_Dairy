@@ -1,0 +1,27 @@
+<app-page-header title="Admin Control"></app-page-header>
+
+<ion-content id="main-content" class="page-content" fullscreen="true">
+  <ion-grid fixed="true">
+    <ion-row class="section-heading">
+      <ion-col>
+        <h1>Future control center</h1>
+        <p>Admin modules reserved for the next API and database phase.</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-md="6" size-xl="4" *ngFor="let module of modules">
+        <ion-card class="module-card">
+          <ion-card-content>
+            <ion-icon [name]="module.icon"></ion-icon>
+            <ion-chip color="medium">{{ module.status }}</ion-chip>
+            <h2>{{ module.title }}</h2>
+            <p>{{ module.detail }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<app-bottom-nav></app-bottom-nav>

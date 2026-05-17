@@ -20,4 +20,20 @@ export class OrdersPage {
     const userId = this.authService.currentUser?.id;
     return orders.filter((order) => order.userId === userId);
   }
+
+  statusColor(order: Order): string {
+    if (order.status === 'Delivered') {
+      return 'success';
+    }
+
+    if (order.status === 'Cancelled') {
+      return 'danger';
+    }
+
+    if (order.status === 'Shipped') {
+      return 'tertiary';
+    }
+
+    return 'warning';
+  }
 }

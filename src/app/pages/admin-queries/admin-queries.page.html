@@ -4,16 +4,16 @@
   <ion-grid fixed="true" *ngIf="queries$ | async as queries">
     <ion-row class="section-heading">
       <ion-col>
-        <h1>All help queries</h1>
-        <p>Admin-only view of user questions submitted from the help page.</p>
+        <h1>Support queries</h1>
+        <p>Open a query to update status and chat with the customer.</p>
       </ion-col>
     </ion-row>
 
     <ion-row>
       <ion-col size="12" size-lg="6" *ngFor="let query of queries">
-        <ion-card class="query-card">
+        <ion-card class="query-card" [routerLink]="['/admin/queries', query.id]">
           <ion-card-header>
-            <ion-chip color="warning">{{ query.status }}</ion-chip>
+            <ion-chip [color]="statusColor(query)">{{ query.status }}</ion-chip>
             <ion-card-title>{{ query.subject }}</ion-card-title>
             <ion-card-subtitle>{{ query.date | date: 'medium' }}</ion-card-subtitle>
           </ion-card-header>
@@ -31,8 +31,8 @@
                 <ion-label>{{ query.mobile }}</ion-label>
               </ion-item>
               <ion-item>
-                <ion-icon name="information-circle-outline" slot="start"></ion-icon>
-                <ion-label>{{ query.message }}</ion-label>
+                <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
+                <ion-label>{{ query.messages.length }} message(s)</ion-label>
               </ion-item>
             </ion-list>
           </ion-card-content>

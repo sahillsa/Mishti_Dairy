@@ -1,102 +1,130 @@
 <app-page-header title="Products"></app-page-header>
 
 <ion-content id="main-content" class="page-content" fullscreen="true">
-  <ion-grid fixed="true">
-    <ion-row class="section-heading">
-      <ion-col size="12" size-lg="7">
-        <h1>Fresh dairy catalog</h1>
-        <p>Browse 12 demo products across milk, paneer, curd, ghee, desserts, and drinks.</p>
-      </ion-col>
-    </ion-row>
+  <ng-container *ngIf="products$ | async as products">
+    <ng-container *ngIf="cart$ | async as cart">
+      <ion-grid fixed="true">
+        <ion-row class="section-heading">
+          <ion-col size="12" size-lg="7">
+            <h1>Fresh dairy catalog</h1>
+            <p>Milk, paneer, ghee, curd, drinks, sweets, and frozen treats.</p>
+          </ion-col>
+        </ion-row>
 
-    <ion-row>
-      <ion-col size="12" size-lg="6">
-        <ion-searchbar
-          placeholder="Search milk, paneer, ghee..."
-          [(ngModel)]="searchTerm"
-          debounce="150"
-        ></ion-searchbar>
-      </ion-col>
-      <ion-col size="12" size-lg="6">
-        <ion-segment [(ngModel)]="selectedCategory" scrollable="true">
-          <ion-segment-button *ngFor="let category of categories" [value]="category">
-            <ion-label>{{ category }}</ion-label>
-          </ion-segment-button>
-        </ion-segment>
-      </ion-col>
-    </ion-row>
+        <ion-row class="catalog-tools">
+          <ion-col size="12" size-lg="5">
+            <ion-searchbar
+              placeholder="Search milk, paneer, ghee..."
+              [(ngModel)]="searchTerm"
+              debounce="150"
+            ></ion-searchbar>
+          </ion-col>
+          <ion-col size="12" size-lg="7">
+            <ion-segment [(ngModel)]="selectedCategory" scrollable="true">
+              <ion-segment-button *ngFor="let category of categories(products)" [value]="category">
+                <ion-label>{{ category }}</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </ion-col>
+        </ion-row>
 
-    <ion-row class="product-grid">
-      <ion-col size="12" size-md="6" size-xl="4" *ngFor="let product of filteredProducts()">
-        <ion-card class="product-card">
-          <ion-img [src]="product.image" [alt]="product.name"></ion-img>
-          <ion-card-header>
-            <ion-chip color="success">{{ product.tag }}</ion-chip>
-            <ion-card-title>{{ product.name }}</ion-card-title>
-            <ion-card-subtitle>{{ product.category }} · {{ product.unit }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <p>{{ product.description }}</p>
-            <ion-grid class="product-meta">
-              <ion-row>
-                <ion-col>
-                  <ion-icon name="star"></ion-icon>
-                  {{ product.rating }}
-                </ion-col>
-                <ion-col>
-                  <ion-icon name="cube-outline"></ion-icon>
-                  {{ product.stock }} in stock
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-            <div class="card-actions">
-              <ion-text color="dark">
-                <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
-              </ion-text>
-              <ion-button fill="outline" (click)="selectedProduct = product">Details</ion-button>
-              <ion-button (click)="addToCart(product)">
-                <ion-icon name="bag-outline" slot="start"></ion-icon>
-                Add
-              </ion-button>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+        <ion-row class="product-grid">
+          <ion-col size="12" size-md="6" size-xl="4" *ngFor="let product of filteredProducts(products)">
+            <ion-card class="product-card storefront-card" [class.sold-out]="shopService.isUnavailable(product)">
+              <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+              <ion-card-header>
+                <ion-chip [color]="shopService.isUnavailable(product) ? 'danger' : 'success'">
+                  {{ shopService.isUnavailable(product) ? 'Out of stock' : product.tag }}
+                </ion-chip>
+                <ion-card-title>{{ product.name }}</ion-card-title>
+                <ion-card-subtitle>{{ product.category }} | {{ product.unit }}</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p>{{ product.description }}</p>
+                <ion-grid class="product-meta">
+                  <ion-row>
+                    <ion-col>
+                      <ion-icon name="star"></ion-icon>
+                      {{ product.rating }}
+                    </ion-col>
+                    <ion-col>
+                      <ion-icon name="cube-outline"></ion-icon>
+                      {{ product.stock }} in stock
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
 
-  <ion-modal [isOpen]="selectedProduct !== null" (didDismiss)="selectedProduct = null">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Product Details</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="selectedProduct = null">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding" *ngIf="selectedProduct as product">
-        <ion-img class="detail-image" [src]="product.image" [alt]="product.name"></ion-img>
-        <ion-list lines="none">
-          <ion-item>
-            <ion-label>
-              <h2>{{ product.name }}</h2>
-              <p>{{ product.description }}</p>
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-icon name="wallet-outline" slot="start"></ion-icon>
-            <ion-label>{{ product.price | currency: 'INR':'symbol':'1.0-0' }} / {{ product.unit }}</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-icon name="cube-outline" slot="start"></ion-icon>
-            <ion-label>{{ product.stock }} units available</ion-label>
-          </ion-item>
-        </ion-list>
-        <ion-button expand="block" (click)="addToCart(product); selectedProduct = null">Add to cart</ion-button>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
+                <ion-item lines="none" class="price-row">
+                  <ion-label>
+                    <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                    <p>per {{ product.unit }}</p>
+                  </ion-label>
+
+                  <ion-button fill="outline" slot="end" (click)="selectedProduct = product">Details</ion-button>
+
+                  <ion-buttons slot="end" class="cart-stepper" *ngIf="quantityInCart(product.id, cart) > 0; else addCatalog">
+                    <ion-button fill="clear" (click)="decrease(product, cart)" aria-label="Decrease quantity">
+                      <ion-icon name="remove-circle-outline"></ion-icon>
+                    </ion-button>
+                    <ion-badge color="success">{{ quantityInCart(product.id, cart) }}</ion-badge>
+                    <ion-button fill="clear" (click)="increase(product, cart)" aria-label="Increase quantity">
+                      <ion-icon name="add-circle-outline"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+
+                  <ng-template #addCatalog>
+                    <ion-button slot="end" (click)="addToCart(product)" [disabled]="shopService.isUnavailable(product)">
+                      <ion-icon name="bag-outline" slot="start"></ion-icon>
+                      Add
+                    </ion-button>
+                  </ng-template>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-modal [isOpen]="selectedProduct !== null" (didDismiss)="selectedProduct = null">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-title>Product details</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="selectedProduct = null">Close</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding" *ngIf="selectedProduct as product">
+            <ion-img class="detail-image" [src]="product.image" [alt]="product.name"></ion-img>
+            <ion-list lines="none">
+              <ion-item>
+                <ion-label>
+                  <h2>{{ product.name }}</h2>
+                  <p>{{ product.description }}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="wallet-outline" slot="start"></ion-icon>
+                <ion-label>{{ product.price | currency: 'INR':'symbol':'1.0-0' }} / {{ product.unit }}</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="cube-outline" slot="start"></ion-icon>
+                <ion-label>{{ product.stock }} units available</ion-label>
+              </ion-item>
+            </ion-list>
+            <ion-button
+              expand="block"
+              (click)="addToCart(product); selectedProduct = null"
+              [disabled]="shopService.isUnavailable(product)"
+            >
+              Add to cart
+            </ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+    </ng-container>
+  </ng-container>
 </ion-content>
 
 <app-bottom-nav></app-bottom-nav>

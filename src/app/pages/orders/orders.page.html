@@ -5,34 +5,33 @@
     <ion-row class="section-heading">
       <ion-col>
         <h1>Order history</h1>
-        <p>Customer-visible order tracking with item, address, and payment details.</p>
+        <p>Track delivery, payment, products, and order chat.</p>
       </ion-col>
     </ion-row>
 
     <ion-row *ngIf="myOrders(orders).length; else noOrders">
       <ion-col size="12" size-lg="6" *ngFor="let order of myOrders(orders)">
-        <ion-card class="order-card">
+        <ion-card class="order-card" [routerLink]="['/orders', order.id]">
           <ion-card-header>
-            <ion-chip color="success">{{ order.status }}</ion-chip>
+            <ion-chip [color]="statusColor(order)">{{ order.status }}</ion-chip>
             <ion-card-title>{{ order.id }}</ion-card-title>
             <ion-card-subtitle>{{ order.date | date: 'medium' }}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
             <ion-list lines="none">
-              <ion-item *ngFor="let item of order.items">
+              <ion-item *ngFor="let item of order.items.slice(0, 2)">
                 <ion-label>
                   <h3>{{ item.name }}</h3>
-                  <p>{{ item.quantity }} × {{ item.unit }}</p>
+                  <p>{{ item.quantity }} x {{ item.unit }}</p>
                 </ion-label>
                 <ion-note slot="end">{{ item.price * item.quantity | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
+              </ion-item>
+              <ion-item *ngIf="order.items.length > 2">
+                <ion-label>{{ order.items.length - 2 }} more item(s)</ion-label>
               </ion-item>
               <ion-item>
                 <ion-icon name="location-outline" slot="start"></ion-icon>
                 <ion-label>{{ order.address }}</ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="wallet-outline" slot="start"></ion-icon>
-                <ion-label>{{ order.paymentMethod }} · {{ order.paymentStatus }}</ion-label>
               </ion-item>
               <ion-item>
                 <ion-label><strong>Total</strong></ion-label>

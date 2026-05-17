@@ -1,3 +1,48 @@
-:host {
-  display: block;
+.admin-hero {
+  padding: 28px 0 10px;
+
+  h1 {
+    max-width: 760px;
+  }
+
+  p {
+    max-width: 640px;
+  }
+}
+
+.admin-status-list {
+  background: transparent;
+
+  ion-item {
+    --background: #ffffff;
+    --border-radius: 8px;
+    border: 1px solid rgba(36, 84, 68, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  ion-icon {
+    color: #b54038;
+    font-size: 28px;
+  }
+}
+
+.admin-action-card {
+  cursor: pointer;
+  height: 100%;
+  margin: 8px 0;
+
+  ion-card-content {
+    display: grid;
+    gap: 10px;
+  }
+
+  ion-icon {
+    font-size: 34px;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
 }

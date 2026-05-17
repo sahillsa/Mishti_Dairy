@@ -1,7 +1,7 @@
 <ion-header class="app-header">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button routerLink="/home" aria-label="Mishti Farmer home">
+    <ion-buttons slot="start" *ngIf="user$ | async as user">
+      <ion-button [routerLink]="homeLink(user)" aria-label="Mishti Farmer home">
         <ion-icon slot="icon-only" name="storefront-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -9,22 +9,29 @@
     <ion-title>{{ title }}</ion-title>
 
     <ion-buttons slot="end" *ngIf="user$ | async as user">
-      <ion-button class="desktop-link" routerLink="/home">Home</ion-button>
-      <ion-button class="desktop-link" routerLink="/products">Products</ion-button>
-      <ion-button class="desktop-link" routerLink="/orders">Orders</ion-button>
-      <ion-button class="desktop-link" routerLink="/help">Help</ion-button>
-      <ion-button class="desktop-link" *ngIf="user.role === 'admin'" routerLink="/admin">
-        Admin
-      </ion-button>
+      <ng-container *ngIf="user.role === 'admin'; else userLinks">
+        <ion-button class="desktop-link" routerLink="/admin/dashboard">Dashboard</ion-button>
+        <ion-button class="desktop-link" routerLink="/admin/orders">Orders</ion-button>
+        <ion-button class="desktop-link" routerLink="/admin/products">Inventory</ion-button>
+        <ion-button class="desktop-link" routerLink="/admin/queries">Queries</ion-button>
+        <ion-button class="desktop-link" routerLink="/admin/control">Control</ion-button>
+      </ng-container>
 
-      <ion-button routerLink="/cart" aria-label="Cart">
-        <ion-icon slot="icon-only" name="bag-outline"></ion-icon>
-        <ion-badge *ngIf="cartCount$ | async as count" color="danger">{{ count }}</ion-badge>
-      </ion-button>
+      <ng-template #userLinks>
+        <ion-button class="desktop-link" routerLink="/home">Home</ion-button>
+        <ion-button class="desktop-link" routerLink="/products">Products</ion-button>
+        <ion-button class="desktop-link" routerLink="/orders">Orders</ion-button>
+        <ion-button class="desktop-link" routerLink="/help">Help</ion-button>
 
-      <ion-button routerLink="/account" aria-label="My account">
-        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-      </ion-button>
+        <ion-button routerLink="/cart" aria-label="Cart">
+          <ion-icon slot="icon-only" name="bag-outline"></ion-icon>
+          <ion-badge *ngIf="cartCount$ | async as count" color="danger">{{ count }}</ion-badge>
+        </ion-button>
+
+        <ion-button routerLink="/account" aria-label="My account">
+          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+        </ion-button>
+      </ng-template>
 
       <ion-button aria-label="Logout" (click)="logout()">
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>

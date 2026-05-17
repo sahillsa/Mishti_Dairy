@@ -21,6 +21,7 @@ export interface Product {
   tag: string;
   stock: number;
   rating: number;
+  isOutOfStock: boolean;
 }
 
 export interface CartItem {
@@ -45,11 +46,14 @@ export interface Order {
   address: string;
   items: OrderItem[];
   total: number;
-  status: 'Placed' | 'Packed' | 'Out for delivery' | 'Delivered';
+  status: OrderStatus;
   paymentStatus: 'Paid' | 'Pending';
   paymentMethod: 'Razorpay' | 'Cash on delivery';
   deliverySlot: string;
   date: string;
+  trackingId?: string;
+  trackingCompany?: string;
+  messages: ThreadMessage[];
 }
 
 export interface HelpQuery {
@@ -60,8 +64,9 @@ export interface HelpQuery {
   mobile: string;
   subject: string;
   message: string;
-  status: 'Open' | 'In review' | 'Closed';
+  status: QueryStatus;
   date: string;
+  messages: ThreadMessage[];
 }
 
 export interface CheckoutDetails {
@@ -69,4 +74,28 @@ export interface CheckoutDetails {
   mobile: string;
   deliverySlot: string;
   paymentMethod: 'Razorpay' | 'Cash on delivery';
+}
+
+export type OrderStatus = 'Placed' | 'Accepted' | 'In review' | 'Shipped' | 'Delivered' | 'Cancelled';
+
+export type QueryStatus = 'Open' | 'In review' | 'Waiting for user' | 'Resolved' | 'Closed';
+
+export interface ThreadMessage {
+  id: string;
+  authorRole: UserRole;
+  authorName: string;
+  message: string;
+  date: string;
+}
+
+export interface ProductDraft {
+  name: string;
+  category: string;
+  description: string;
+  image: string;
+  price: number;
+  unit: string;
+  tag: string;
+  stock: number;
+  rating: number;
 }

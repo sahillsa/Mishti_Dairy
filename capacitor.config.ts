@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.mishtifarmer.app',
   appName: 'Mishti Farmer',
-  webDir: 'dist/mishti-farmer/browser',
+  webDir: 'www',
   bundledWebRuntime: false,
   plugins: {
     SplashScreen: {

@@ -1,0 +1,9 @@
+.stock-input {
+  max-width: 92px;
+}
+
+@media (max-width: 760px) {
+  .stock-input {
+    max-width: 72px;
+  }
+}

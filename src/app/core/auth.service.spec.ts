@@ -1,5 +1,3 @@
-import { TestBed } from '@angular/core/testing';
-
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
@@ -7,8 +5,7 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(AuthService);
+    service = new AuthService();
   });
 
   it('logs in the demo user', () => {

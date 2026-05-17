@@ -32,6 +32,7 @@ export const PRODUCTS: Product[] = [
     unit: '1 litre',
     tag: 'Daily fresh',
     stock: 42,
+    isOutOfStock: false,
     rating: 4.9,
   },
   {
@@ -44,6 +45,7 @@ export const PRODUCTS: Product[] = [
     unit: '1 litre',
     tag: 'Full cream',
     stock: 35,
+    isOutOfStock: false,
     rating: 4.8,
   },
   {
@@ -56,6 +58,7 @@ export const PRODUCTS: Product[] = [
     unit: '500 g',
     tag: 'High protein',
     stock: 26,
+    isOutOfStock: false,
     rating: 4.8,
   },
   {
@@ -68,6 +71,7 @@ export const PRODUCTS: Product[] = [
     unit: '400 g',
     tag: 'Signature',
     stock: 30,
+    isOutOfStock: false,
     rating: 4.9,
   },
   {
@@ -80,6 +84,7 @@ export const PRODUCTS: Product[] = [
     unit: '500 ml',
     tag: 'Premium',
     stock: 18,
+    isOutOfStock: false,
     rating: 4.9,
   },
   {
@@ -92,6 +97,7 @@ export const PRODUCTS: Product[] = [
     unit: '250 g',
     tag: 'Churned fresh',
     stock: 21,
+    isOutOfStock: false,
     rating: 4.7,
   },
   {
@@ -104,6 +110,7 @@ export const PRODUCTS: Product[] = [
     unit: '500 g',
     tag: 'No stabilizers',
     stock: 50,
+    isOutOfStock: false,
     rating: 4.7,
   },
   {
@@ -116,6 +123,7 @@ export const PRODUCTS: Product[] = [
     unit: '250 ml',
     tag: 'Ready to drink',
     stock: 64,
+    isOutOfStock: false,
     rating: 4.6,
   },
   {
@@ -128,6 +136,7 @@ export const PRODUCTS: Product[] = [
     unit: '300 ml',
     tag: 'Summer pick',
     stock: 58,
+    isOutOfStock: false,
     rating: 4.6,
   },
   {
@@ -140,6 +149,7 @@ export const PRODUCTS: Product[] = [
     unit: '500 g',
     tag: 'Festive',
     stock: 16,
+    isOutOfStock: false,
     rating: 4.8,
   },
   {
@@ -152,6 +162,7 @@ export const PRODUCTS: Product[] = [
     unit: '2 pieces',
     tag: 'Frozen',
     stock: 22,
+    isOutOfStock: false,
     rating: 4.7,
   },
   {
@@ -164,6 +175,7 @@ export const PRODUCTS: Product[] = [
     unit: '250 ml',
     tag: 'Chef choice',
     stock: 38,
+    isOutOfStock: false,
     rating: 4.6,
   },
 ];
@@ -182,11 +194,27 @@ export const SEEDED_ORDERS: Order[] = [
       { productId: 104, name: 'Mishti Doi', price: 145, unit: '400 g', quantity: 1 },
     ],
     total: 519,
-    status: 'Placed',
+    status: 'Accepted',
     paymentStatus: 'Paid',
     paymentMethod: 'Razorpay',
     deliverySlot: 'Tomorrow, 7:00 AM - 9:00 AM',
     date: new Date('2026-05-09T09:30:00+05:30').toISOString(),
+    messages: [
+      {
+        id: 'M-2401-1',
+        authorRole: 'user',
+        authorName: 'Aarav Sharma',
+        message: 'Please keep the milk packet at the security desk if I am not home.',
+        date: new Date('2026-05-09T09:36:00+05:30').toISOString(),
+      },
+      {
+        id: 'M-2401-2',
+        authorRole: 'admin',
+        authorName: 'Mishti Admin',
+        message: 'Sure, the delivery partner will call before reaching.',
+        date: new Date('2026-05-09T09:50:00+05:30').toISOString(),
+      },
+    ],
   },
 ];
 
@@ -201,6 +229,15 @@ export const SEEDED_QUERIES: HelpQuery[] = [
     message: 'Can I keep my regular milk delivery between 6:30 AM and 7:00 AM?',
     status: 'Open',
     date: new Date('2026-05-08T17:15:00+05:30').toISOString(),
+    messages: [
+      {
+        id: 'QM-9001-1',
+        authorRole: 'user',
+        authorName: 'Aarav Sharma',
+        message: 'Can I keep my regular milk delivery between 6:30 AM and 7:00 AM?',
+        date: new Date('2026-05-08T17:15:00+05:30').toISOString(),
+      },
+    ],
   },
   {
     id: 'Q-9002',
@@ -212,5 +249,21 @@ export const SEEDED_QUERIES: HelpQuery[] = [
     message: 'Need 4 kg paneer next Sunday for a family function. Please confirm availability.',
     status: 'In review',
     date: new Date('2026-05-09T12:10:00+05:30').toISOString(),
+    messages: [
+      {
+        id: 'QM-9002-1',
+        authorRole: 'user',
+        authorName: 'Aarav Sharma',
+        message: 'Need 4 kg paneer next Sunday for a family function. Please confirm availability.',
+        date: new Date('2026-05-09T12:10:00+05:30').toISOString(),
+      },
+      {
+        id: 'QM-9002-2',
+        authorRole: 'admin',
+        authorName: 'Mishti Admin',
+        message: 'We are checking the paneer batch plan and will confirm the slot.',
+        date: new Date('2026-05-09T12:35:00+05:30').toISOString(),
+      },
+    ],
   },
 ];

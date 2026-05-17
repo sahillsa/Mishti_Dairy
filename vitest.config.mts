@@ -2,6 +2,13 @@ import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    exclude: ['**/node_modules/**', 'ionic-reference/**'],
+    globals: true,
+    include: ['src/**/*.spec.ts'],
+    pool: 'threads',
+  },
   resolve: {
     alias: [
       {

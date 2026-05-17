@@ -10,10 +10,10 @@ Ionic Angular PWA and Capacitor demo app for a dairy product storefront.
 ## Tech Stack
 
 - Angular `21.2.x` with classic NgModule setup, not standalone components
-- Ionic Angular `8.8.x`
-- Capacitor `8.3.x`
+- Ionic Angular `8.8.x` with Ionic CLI project structure
+- Capacitor `8.3.x` with Android and iOS projects
 - Angular service worker PWA
-- Dummy local storage services for auth, cart, orders, and support queries
+- Dummy local storage services for auth, catalog, cart, orders, inventory, and support queries
 
 ## Run Locally
 
@@ -24,9 +24,11 @@ npm start
 
 Open `http://localhost:4200/`.
 
-## Build
+## Ionic Commands
 
 ```bash
+npm run ionic -- --help
+npm run serve
 npm run build
 ```
 
@@ -49,6 +51,9 @@ Android requires Android Studio. iOS builds require macOS with Xcode.
 ## Pages Included
 
 - Login, register, forgot password
-- Home, products, cart, payment, orders, account
-- Help & contact
-- Protected admin dashboard, admin orders, admin queries
+- User-only home, products, cart, payment, orders, order detail chat, account, help, query detail chat
+- Admin-only dashboard, orders, order detail with status and tracking, inventory/product add, support queries, query status/chat, future control center
+
+## GitHub Pages
+
+The repository includes `.github/workflows/deploy-pages.yml`. After code is pushed to `main`, GitHub Pages builds `www` using `npm run build:github`.

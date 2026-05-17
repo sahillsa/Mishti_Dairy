@@ -1,0 +1,115 @@
+<app-page-header title="Query Detail"></app-page-header>
+
+<ion-content id="main-content" class="page-content" fullscreen="true">
+  <ion-grid fixed="true">
+    <ion-row class="section-heading">
+      <ion-col>
+        <ion-button fill="clear" [routerLink]="backLink()">
+          <ion-icon name="chevron-forward-outline" slot="start" class="back-icon"></ion-icon>
+          Back
+        </ion-button>
+        <h1>{{ query?.subject || 'Query' }}</h1>
+        <p *ngIf="query && canAccess">Support status, customer details, and chat history.</p>
+      </ion-col>
+    </ion-row>
+
+    <ng-container *ngIf="query && canAccess; else unavailable">
+      <ion-row>
+        <ion-col size="12" size-lg="5">
+          <ion-card>
+            <ion-card-header>
+              <ion-chip [color]="statusColor(query)">{{ query.status }}</ion-chip>
+              <ion-card-title>{{ query.subject }}</ion-card-title>
+              <ion-card-subtitle>{{ query.date | date: 'medium' }}</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list lines="none">
+                <ion-item>
+                  <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+                  <ion-label>
+                    <h3>{{ query.name }}</h3>
+                    <p>{{ query.email }}</p>
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="call-outline" slot="start"></ion-icon>
+                  <ion-label>{{ query.mobile }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+                  <ion-label>{{ query.message }}</ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card *ngIf="isAdmin">
+            <ion-card-header>
+              <ion-card-title>Update query status</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item lines="full">
+                <ion-select label="Status" labelPlacement="stacked" [(ngModel)]="statusDraft">
+                  <ion-select-option *ngFor="let status of statuses" [value]="status">{{ status }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-button expand="block" (click)="updateStatus()">
+                <ion-icon name="save-outline" slot="start"></ion-icon>
+                Save status
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="12" size-lg="7">
+          <ion-card class="thread-card">
+            <ion-card-header>
+              <ion-card-title>Query chat</ion-card-title>
+              <ion-card-subtitle>Customer and admin conversation</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list class="chat-list" lines="none">
+                <ion-item *ngFor="let message of query.messages" [class.admin-message]="message.authorRole === 'admin'">
+                  <ion-label>
+                    <h3>{{ message.authorName }} <ion-note>{{ message.date | date: 'short' }}</ion-note></h3>
+                    <p>{{ message.message }}</p>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+
+              <ion-item lines="full">
+                <ion-textarea
+                  label="Message"
+                  labelPlacement="stacked"
+                  autoGrow="true"
+                  [(ngModel)]="chatMessage"
+                ></ion-textarea>
+              </ion-item>
+              <ion-button expand="block" (click)="sendMessage()">
+                <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon>
+                Send message
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ng-container>
+
+    <ng-template #unavailable>
+      <ion-row>
+        <ion-col>
+          <ion-card class="empty-state">
+            <ion-card-content>
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <h2>Query not available</h2>
+              <p>This query is missing or your role cannot open it.</p>
+              <ion-button [routerLink]="backLink()">Go back</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ng-template>
+  </ion-grid>
+</ion-content>
+
+<app-bottom-nav></app-bottom-nav>

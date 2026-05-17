@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { map } from 'rxjs';
 
 import { AuthService } from '../core/auth.service';
+import { User } from '../core/models';
 import { ShopService } from '../core/shop.service';
 
 @Component({
@@ -20,6 +21,10 @@ export class PageHeaderComponent {
 
   readonly user$ = this.authService.currentUser$;
   readonly cartCount$ = this.shopService.cart$.pipe(map((cart) => this.shopService.cartCount(cart)));
+
+  homeLink(user: User): string {
+    return user.role === 'admin' ? '/admin/dashboard' : '/home';
+  }
 
   logout(): void {
     this.authService.logout();

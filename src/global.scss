@@ -63,13 +63,13 @@ p {
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-size: 3.75rem;
   line-height: 1.02;
   margin: 0 0 16px;
 }
 
 h2 {
-  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  font-size: 1.75rem;
   margin: 0 0 8px;
 }
 
@@ -106,7 +106,7 @@ ion-chip {
 }
 
 .hero-copy {
-  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-size: 1.12rem;
   max-width: 620px;
 }
 
@@ -134,7 +134,7 @@ ion-chip {
 
   strong {
     color: #18715a;
-    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-size: 2rem;
   }
 
   span {
@@ -196,6 +196,41 @@ ion-chip {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: space-between;
+}
+
+.storefront-card {
+  height: 100%;
+}
+
+.chat-list {
+  background: transparent;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  ion-item {
+    --background: #f7fbf7;
+    --border-radius: 8px;
+    border: 1px solid rgba(36, 84, 68, 0.08);
+    border-radius: 8px;
+    max-width: 760px;
+  }
+
+  .admin-message {
+    --background: #eef6ff;
+    margin-left: auto;
+  }
+
+  h3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 4px;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 
 .surface-list {
@@ -354,7 +389,11 @@ ion-chip {
 
 @media (max-width: 760px) {
   h1 {
-    font-size: clamp(2rem, 12vw, 3.1rem);
+    font-size: 2.35rem;
+  }
+
+  h2 {
+    font-size: 1.35rem;
   }
 
   .page-content {

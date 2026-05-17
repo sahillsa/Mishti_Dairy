@@ -39,6 +39,12 @@ export class LoginPage {
 
     const user = this.authService.currentUser;
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    void this.router.navigateByUrl(returnUrl ?? (user?.role === 'admin' ? '/admin' : '/home'));
+    const defaultUrl = user?.role === 'admin' ? '/admin/dashboard' : '/home';
+    const canUseReturnUrl =
+      Boolean(returnUrl) &&
+      ((user?.role === 'admin' && returnUrl?.startsWith('/admin')) ||
+        (user?.role === 'user' && !returnUrl?.startsWith('/admin')));
+
+    void this.router.navigateByUrl(canUseReturnUrl ? returnUrl ?? defaultUrl : defaultUrl);
   }
 }

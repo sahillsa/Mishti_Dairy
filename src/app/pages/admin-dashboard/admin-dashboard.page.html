@@ -1,103 +1,142 @@
-<app-page-header title="Admin Dashboard"></app-page-header>
+<app-page-header title="Admin Panel"></app-page-header>
 
-<ion-content id="main-content" class="page-content" fullscreen="true">
+<ion-content id="main-content" class="page-content admin-content" fullscreen="true">
   <ion-grid fixed="true">
-    <ion-row class="section-heading">
-      <ion-col>
-        <h1>Admin control room</h1>
-        <p>Protected admin area with order and support visibility.</p>
+    <ion-row class="admin-hero ion-align-items-center">
+      <ion-col size="12" size-lg="7">
+        <ion-chip color="tertiary">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <ion-label>Admin only</ion-label>
+        </ion-chip>
+        <h1>Mishti Farmer operations</h1>
+        <p>Orders, stock, support, delivery, payments, and future controls in one admin panel.</p>
+      </ion-col>
+      <ion-col size="12" size-lg="5">
+        <ion-list class="admin-status-list" lines="none">
+          <ion-item>
+            <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Morning dispatch</h2>
+              <p>Milk and chilled products are prioritized.</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="car-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Delivery desk</h2>
+              <p>Tracking can be added after shipment.</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
       </ion-col>
     </ion-row>
 
     <ng-container *ngIf="orders$ | async as orders">
       <ng-container *ngIf="queries$ | async as queries">
-        <ion-row class="stat-row">
-          <ion-col size="6" size-lg="3">
-            <ion-card class="metric-card">
-              <ion-card-content>
-                <strong>{{ orders.length }}</strong>
-                <span>Total orders</span>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col size="6" size-lg="3">
-            <ion-card class="metric-card">
-              <ion-card-content>
-                <strong>{{ revenue(orders) | currency: 'INR':'symbol':'1.0-0' }}</strong>
-                <span>Revenue</span>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col size="6" size-lg="3">
-            <ion-card class="metric-card">
-              <ion-card-content>
-                <strong>{{ products.length }}</strong>
-                <span>Products</span>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col size="6" size-lg="3">
-            <ion-card class="metric-card">
-              <ion-card-content>
-                <strong>{{ openQueries(queries) }}</strong>
-                <span>Open queries</span>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
+        <ng-container *ngIf="products$ | async as products">
+          <ion-row class="stat-row">
+            <ion-col size="6" size-lg="3">
+              <ion-card class="metric-card">
+                <ion-card-content>
+                  <strong>{{ orders.length }}</strong>
+                  <span>Total orders</span>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col size="6" size-lg="3">
+              <ion-card class="metric-card">
+                <ion-card-content>
+                  <strong>{{ revenue(orders) | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                  <span>Revenue</span>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col size="6" size-lg="3">
+              <ion-card class="metric-card">
+                <ion-card-content>
+                  <strong>{{ products.length }}</strong>
+                  <span>Products</span>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col size="6" size-lg="3">
+              <ion-card class="metric-card">
+                <ion-card-content>
+                  <strong>{{ openQueries(queries) }}</strong>
+                  <span>Open queries</span>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
 
-        <ion-row>
-          <ion-col size="12" size-lg="6">
-            <ion-card>
-              <ion-card-header>
-                <ion-card-title>Order operations</ion-card-title>
-                <ion-card-subtitle>Review placed orders and user delivery details</ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-button expand="block" routerLink="/admin/orders">
-                  View all orders
-                  <ion-icon name="receipt-outline" slot="end"></ion-icon>
-                </ion-button>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col size="12" size-lg="6">
-            <ion-card>
-              <ion-card-header>
-                <ion-card-title>Support desk</ion-card-title>
-                <ion-card-subtitle>Track all customer help queries</ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-button expand="block" routerLink="/admin/queries">
-                  View all queries
-                  <ion-icon name="help-circle-outline" slot="end"></ion-icon>
-                </ion-button>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
+          <ion-row class="section-heading">
+            <ion-col>
+              <h2>Admin workbench</h2>
+            </ion-col>
+          </ion-row>
 
-        <ion-row class="section-heading">
-          <ion-col>
-            <h2>Latest orders</h2>
-          </ion-col>
-        </ion-row>
+          <ion-row>
+            <ion-col size="12" size-md="6" size-xl="3" *ngFor="let card of controlCards">
+              <ion-card class="admin-action-card" [routerLink]="card.link">
+                <ion-card-content>
+                  <ion-icon [name]="card.icon" [color]="card.color"></ion-icon>
+                  <h3>{{ card.title }}</h3>
+                  <p>{{ card.subtitle }}</p>
+                  <ion-button fill="clear">
+                    Open
+                    <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+                  </ion-button>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
 
-        <ion-row>
-          <ion-col size="12" size-lg="6" *ngFor="let order of orders.slice(0, 2)">
-            <ion-card class="order-card">
-              <ion-card-header>
-                <ion-chip color="success">{{ order.status }}</ion-chip>
-                <ion-card-title>{{ order.id }}</ion-card-title>
-                <ion-card-subtitle>{{ order.userName }} · {{ order.mobile }}</ion-card-subtitle>
-              </ion-card-header>
-              <ion-card-content>
-                <p>{{ order.address }}</p>
-                <ion-note color="dark">{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
+          <ion-row>
+            <ion-col size="12" size-lg="7">
+              <ion-card>
+                <ion-card-header>
+                  <ion-card-title>Latest orders</ion-card-title>
+                  <ion-card-subtitle>Click an order to manage status and chat</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-list lines="full">
+                    <ion-item button [routerLink]="['/admin/orders', order.id]" *ngFor="let order of orders.slice(0, 4)">
+                      <ion-icon name="receipt-outline" slot="start"></ion-icon>
+                      <ion-label>
+                        <h3>{{ order.id }} | {{ order.userName }}</h3>
+                        <p>{{ order.mobile }} | {{ order.status }}</p>
+                      </ion-label>
+                      <ion-note slot="end">{{ order.total | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
+                    </ion-item>
+                  </ion-list>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-lg="5">
+              <ion-card>
+                <ion-card-header>
+                  <ion-card-title>Inventory watch</ion-card-title>
+                  <ion-card-subtitle>{{ lowStock(products) }} product(s) need attention</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-list lines="full">
+                    <ion-item *ngFor="let product of products.slice(0, 5)">
+                      <ion-icon name="cube-outline" slot="start"></ion-icon>
+                      <ion-label>
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.stock }} in stock</p>
+                      </ion-label>
+                      <ion-badge slot="end" [color]="product.isOutOfStock || product.stock === 0 ? 'danger' : 'success'">
+                        {{ product.isOutOfStock || product.stock === 0 ? 'Out' : 'Live' }}
+                      </ion-badge>
+                    </ion-item>
+                  </ion-list>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ng-container>
       </ng-container>
     </ng-container>
   </ion-grid>

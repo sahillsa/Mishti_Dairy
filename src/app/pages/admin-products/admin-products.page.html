@@ -1,0 +1,100 @@
+<app-page-header title="Inventory"></app-page-header>
+
+<ion-content id="main-content" class="page-content" fullscreen="true">
+  <ion-grid fixed="true" *ngIf="products$ | async as products">
+    <ion-row class="section-heading">
+      <ion-col>
+        <h1>Products and stock</h1>
+        <p>Add dairy products, update quantity, or mark items out of stock.</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-lg="5">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Add product</ion-card-title>
+            <ion-card-subtitle>Creates a local demo SKU</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <form [formGroup]="form" (ngSubmit)="addProduct()">
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-input label="Product name" labelPlacement="stacked" formControlName="name"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Category" labelPlacement="stacked" formControlName="category"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-textarea label="Description" labelPlacement="stacked" autoGrow="true" formControlName="description"></ion-textarea>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Image URL" labelPlacement="stacked" formControlName="image"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Unit" labelPlacement="stacked" formControlName="unit"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Tag" labelPlacement="stacked" formControlName="tag"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Price" labelPlacement="stacked" type="number" formControlName="price"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Quantity" labelPlacement="stacked" type="number" formControlName="stock"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Rating" labelPlacement="stacked" type="number" formControlName="rating"></ion-input>
+                </ion-item>
+              </ion-list>
+              <ion-button expand="block" type="submit">
+                <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                Add product
+              </ion-button>
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-lg="7">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Inventory list</ion-card-title>
+            <ion-card-subtitle>{{ products.length }} products in catalog</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="full">
+              <ion-item *ngFor="let product of products">
+                <ion-thumbnail slot="start">
+                  <img [src]="product.image" [alt]="product.name" />
+                </ion-thumbnail>
+                <ion-label>
+                  <h3>{{ product.name }}</h3>
+                  <p>{{ product.category }} | {{ product.unit }} | {{ product.price | currency: 'INR':'symbol':'1.0-0' }}</p>
+                </ion-label>
+                <ion-input
+                  slot="end"
+                  class="stock-input"
+                  type="number"
+                  aria-label="Stock quantity"
+                  [(ngModel)]="stockDrafts[product.id]"
+                ></ion-input>
+                <ion-toggle
+                  slot="end"
+                  aria-label="Out of stock"
+                  [checked]="product.isOutOfStock"
+                  (ionChange)="toggleOutOfStock(product, $event.detail.checked)"
+                ></ion-toggle>
+                <ion-button slot="end" fill="outline" (click)="saveStock(product)">
+                  <ion-icon name="save-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<app-bottom-nav></app-bottom-nav>

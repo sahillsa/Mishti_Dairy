@@ -1,79 +1,134 @@
 <app-page-header title="Mishti Farmer"></app-page-header>
 
-<ion-content id="main-content" class="page-content" fullscreen="true">
-  <ion-grid fixed="true">
-    <ion-row class="hero-row ion-align-items-center">
-      <ion-col size="12" size-lg="6">
-        <ion-chip color="success">
-          <ion-icon name="leaf-outline"></ion-icon>
-          <ion-label>Farm fresh dairy</ion-label>
-        </ion-chip>
-        <h1>Milk, paneer, ghee, curd, and sweets delivered fresh.</h1>
-        <p class="hero-copy">
-          Mishti Farmer brings daily dairy staples and small-batch treats into one responsive PWA for web,
-          Android, and iOS demos.
-        </p>
-        <ion-button routerLink="/products" size="large">
-          Shop products
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-        </ion-button>
-        <ion-button routerLink="/orders" fill="outline" size="large">My orders</ion-button>
-      </ion-col>
-      <ion-col size="12" size-lg="6">
-        <ion-img
-          class="hero-image"
-          src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1400&q=80"
-          alt="Dairy farm"
-        ></ion-img>
-      </ion-col>
-    </ion-row>
+<ion-content id="main-content" class="page-content home-content" fullscreen="true">
+  <ng-container *ngIf="products$ | async as products">
+    <ng-container *ngIf="cart$ | async as cart">
+      <ion-grid fixed="true">
+        <ion-row class="home-hero ion-align-items-center">
+          <ion-col size="12" size-lg="6">
+            <ion-chip color="success">
+              <ion-icon name="leaf-outline"></ion-icon>
+              <ion-label>Farm fresh dairy</ion-label>
+            </ion-chip>
+            <h1>Mishti Farmer dairy store</h1>
+            <p class="hero-copy">
+              Fresh milk, paneer, ghee, curd, chaas, lassi, and desserts packed for daily family orders.
+            </p>
 
-    <ion-row class="stat-row">
-      <ion-col size="4" *ngFor="let stat of stats">
-        <ion-card class="metric-card">
-          <ion-card-content>
-            <strong>{{ stat.value }}</strong>
-            <span>{{ stat.label }}</span>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="section-heading ion-align-items-center">
-      <ion-col>
-        <h2>Today’s Picks</h2>
-        <p>Best items to show in the first client walkthrough.</p>
-      </ion-col>
-      <ion-col size="auto">
-        <ion-button fill="clear" routerLink="/products">View all</ion-button>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="product-grid">
-      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let product of featuredProducts">
-        <ion-card class="product-card">
-          <ion-img [src]="product.image" [alt]="product.name"></ion-img>
-          <ion-card-header>
-            <ion-chip color="tertiary">{{ product.tag }}</ion-chip>
-            <ion-card-title>{{ product.name }}</ion-card-title>
-            <ion-card-subtitle>{{ product.category }} · {{ product.unit }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <p>{{ product.description }}</p>
-            <div class="card-actions">
-              <ion-text color="dark">
-                <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
-              </ion-text>
-              <ion-button (click)="addToCart(product)">
-                <ion-icon name="bag-outline" slot="start"></ion-icon>
-                Add
+            <ion-buttons class="hero-actions">
+              <ion-button routerLink="/products" size="large">
+                <ion-icon name="grid-outline" slot="start"></ion-icon>
+                Shop now
               </ion-button>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+              <ion-button routerLink="/orders" size="large" fill="outline">
+                <ion-icon name="receipt-outline" slot="start"></ion-icon>
+                Orders
+              </ion-button>
+            </ion-buttons>
+
+            <ion-row class="hero-stats">
+              <ion-col size="4" *ngFor="let stat of stats">
+                <ion-text>
+                  <strong>{{ stat.value }}</strong>
+                  <span>{{ stat.label }}</span>
+                </ion-text>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+
+          <ion-col size="12" size-lg="6">
+            <ion-img
+              class="hero-image"
+              src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1400&q=80"
+              alt="Fresh dairy farm"
+            ></ion-img>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="promise-row">
+          <ion-col size="12" size-md="4" *ngFor="let card of promiseCards">
+            <ion-item lines="none" class="promise-item">
+              <ion-icon [name]="card.icon" slot="start"></ion-icon>
+              <ion-label>
+                <h2>{{ card.label }}</h2>
+                <p>{{ card.detail }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="section-heading ion-align-items-center">
+          <ion-col>
+            <h2>Featured dairy</h2>
+            <p>Quick picks for today.</p>
+          </ion-col>
+          <ion-col size="auto">
+            <ion-button fill="clear" routerLink="/products">
+              View all
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="product-grid">
+          <ion-col size="12" size-md="6" size-xl="3" *ngFor="let product of featuredProducts(products)">
+            <ion-card class="product-card storefront-card">
+              <ion-img [src]="product.image" [alt]="product.name"></ion-img>
+              <ion-card-header>
+                <ion-chip color="tertiary">{{ product.tag }}</ion-chip>
+                <ion-card-title>{{ product.name }}</ion-card-title>
+                <ion-card-subtitle>{{ product.category }} | {{ product.unit }}</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p>{{ product.description }}</p>
+                <ion-item lines="none" class="price-row">
+                  <ion-label>
+                    <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
+                    <p>{{ product.stock }} available</p>
+                  </ion-label>
+
+                  <ion-buttons slot="end" class="cart-stepper" *ngIf="quantityInCart(product.id, cart) > 0; else addHome">
+                    <ion-button fill="clear" (click)="decrease(product, cart)" aria-label="Decrease quantity">
+                      <ion-icon name="remove-circle-outline"></ion-icon>
+                    </ion-button>
+                    <ion-badge color="success">{{ quantityInCart(product.id, cart) }}</ion-badge>
+                    <ion-button fill="clear" (click)="increase(product, cart)" aria-label="Increase quantity">
+                      <ion-icon name="add-circle-outline"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+
+                  <ng-template #addHome>
+                    <ion-button slot="end" (click)="addToCart(product)" [disabled]="shopService.isUnavailable(product)">
+                      <ion-icon name="bag-outline" slot="start"></ion-icon>
+                      Add
+                    </ion-button>
+                  </ng-template>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="section-heading">
+          <ion-col>
+            <h2>Shop by category</h2>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="category-row">
+          <ion-col size="6" size-md="4" size-lg="2" *ngFor="let category of categoryNames(products)">
+            <ion-card class="category-card" routerLink="/products" [queryParams]="{ category: category }">
+              <ion-card-content>
+                <ion-icon name="pricetag-outline"></ion-icon>
+                <h3>{{ category }}</h3>
+                <p>{{ productsInCategory(products, category) }} items</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-container>
+  </ng-container>
 </ion-content>
 
 <app-bottom-nav></app-bottom-nav>

@@ -1,5 +1,30 @@
+.catalog-tools {
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .detail-image {
   border-radius: 8px;
   max-height: 320px;
   overflow: hidden;
+}
+
+.price-row {
+  --background: transparent;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  margin-top: 8px;
+}
+
+.cart-stepper {
+  align-items: center;
+  gap: 4px;
+
+  ion-badge {
+    min-width: 30px;
+  }
+}
+
+.sold-out {
+  opacity: 0.72;
 }

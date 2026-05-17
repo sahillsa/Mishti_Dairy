@@ -73,7 +73,7 @@
               <ion-item *ngFor="let item of cart">
                 <ion-label>
                   <h3>{{ item.product.name }}</h3>
-                  <p>{{ item.quantity }} × {{ item.product.unit }}</p>
+                  <p>{{ item.quantity }} x {{ item.product.unit }}</p>
                 </ion-label>
                 <ion-note slot="end">{{ item.product.price * item.quantity | currency: 'INR':'symbol':'1.0-0' }}</ion-note>
               </ion-item>
@@ -94,7 +94,7 @@
                 {{ placedOrder.paymentMethod }} payment is {{ placedOrder.paymentStatus | lowercase }}. Delivery:
                 {{ placedOrder.deliverySlot }}.
               </p>
-              <ion-button routerLink="/orders">View order</ion-button>
+              <ion-button [routerLink]="['/orders', placedOrder.id]">View order</ion-button>
             </ion-card-content>
           </ion-card>
           <ng-template #noItems>
