@@ -320,10 +320,23 @@
           color: var(--ion-color-primary);
         }
 
-        ion-button {
-          margin: 0;
-          --border-radius: 8px;
+        .add-btn {
+          background: white;
+          color: var(--ion-color-primary);
+          border: 1px solid var(--ion-color-primary);
+          border-radius: 8px;
+          font-size: 0.8rem;
           font-weight: 800;
+          padding: 8px;
+          height: 36px;
+          cursor: pointer;
+          text-transform: uppercase;
+          transition: all 0.2s ease;
+          width: 100%;
+
+          &:hover {
+            background: rgba(15, 133, 68, 0.1);
+          }
         }
 
         .full-stepper {

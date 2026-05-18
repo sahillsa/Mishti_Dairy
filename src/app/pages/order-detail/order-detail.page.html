@@ -164,7 +164,7 @@
                   [(ngModel)]="chatMessage"
                   class="chat-textarea"
                 ></ion-textarea>
-                <ion-button fill="clear" (click)="sendMessage()" [disabled]="!chatMessage?.trim()">
+                <ion-button fill="clear" (click)="sendMessage()" [disabled]="!chatMessage.trim()">
                   <ion-icon name="send" slot="icon-only"></ion-icon>
                 </ion-button>
               </div>

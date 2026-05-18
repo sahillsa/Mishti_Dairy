@@ -55,8 +55,19 @@
     overflow-x: auto;
     gap: 8px;
     padding-bottom: 4px;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.15) transparent;
+    &::-webkit-scrollbar { 
+      height: 4px;
+      display: block; 
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 4px;
+    }
 
     ion-chip {
       margin: 0;

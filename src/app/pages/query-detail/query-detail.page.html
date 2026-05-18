@@ -86,7 +86,7 @@
                 [(ngModel)]="chatMessage"
                 class="premium-textarea"
               ></ion-textarea>
-              <button class="send-btn" (click)="sendMessage()" [disabled]="!chatMessage?.trim()">
+              <button class="send-btn" (click)="sendMessage()" [disabled]="!chatMessage.trim()">
                 <ion-icon name="send"></ion-icon>
               </button>
             </div>

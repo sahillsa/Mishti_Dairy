@@ -88,10 +88,9 @@
                     <div class="price-box">
                       <strong>{{ product.price | currency: 'INR':'symbol':'1.0-0' }}</strong>
                     </div>
-                    <ion-button size="small" expand="block" *ngIf="quantityInCart(product.id, cart) === 0; else stepper"
-                      (click)="addToCart(product)">
+                    <button class="add-btn" *ngIf="quantityInCart(product.id, cart) === 0; else stepper" (click)="addToCart(product)">
                       ADD
-                    </ion-button>
+                    </button>
                     <ng-template #stepper>
                       <div class="full-stepper">
                         <ion-button fill="clear" size="small" (click)="decrease(product, cart)">-</ion-button>
